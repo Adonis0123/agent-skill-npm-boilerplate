@@ -1,7 +1,7 @@
 {
   "name": "your-skill-name",
   "version": "1.0.0",
-  "package": "@antskill/your-skill-name",
+  "package": "@your-org/your-skill-name",
   "files": {
     "reference.md": "reference.md",
     "examples.md": "examples.md",

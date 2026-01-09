@@ -5,7 +5,7 @@
 This is a GitHub template repository for creating [Claude Code skills](https://code.claude.com/docs/en/skills) that can be distributed and installed via npm. It provides a complete, production-ready structure following the official Claude Code skills specification.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![npm](https://img.shields.io/badge/npm-%40antskill-brightgreen)](https://www.npmjs.com/package/@antskill)
+[![GitHub Template](https://img.shields.io/badge/Template-Use%20This-brightgreen)](https://github.com/YOUR-USERNAME/agent-skill-npm-boilerplate/generate)
 
 ## 🎯 What is this?
 
@@ -13,7 +13,7 @@ This boilerplate helps you create skills that can be installed via npm:
 
 ```bash
 # Your users can install your skill like this
-npm install -g @antskill/your-skill
+npm install -g @your-org/your-skill
 
 # The skill is automatically installed to ~/.claude/skills/
 # and immediately available in Claude Code
@@ -31,18 +31,29 @@ npm install -g @antskill/your-skill
 
 ## 🚀 Quick Start
 
-### Option 1: Use as GitHub Template
+### Option 1: Use as GitHub Template (Recommended)
 
-1. Click the "Use this template" button at the top of this repository
-2. Clone your new repository
-3. Customize your skill (see [Customization Guide](#-customization-guide))
-4. Publish to npm
+This is a **GitHub Template Repository**. The easiest way to use it:
+
+1. **Click the "Use this template" button** at the top of this repository (or [click here](https://github.com/YOUR-USERNAME/agent-skill-npm-boilerplate/generate))
+2. **Name your new repository** (e.g., `my-awesome-skill`)
+3. **Clone your new repository**:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/my-awesome-skill.git
+   cd my-awesome-skill
+   ```
+4. **Customize your skill** (see [Customization Guide](#-customization-guide))
+5. **Publish to npm**:
+   ```bash
+   npm login
+   npm publish --access public
+   ```
 
 ### Option 2: Clone Directly
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/agent-skill-npm-boilerplate.git my-skill
+git clone https://github.com/YOUR-USERNAME/agent-skill-npm-boilerplate.git my-skill
 cd my-skill
 
 # Remove git history and start fresh
@@ -82,7 +93,7 @@ Replace the following placeholders:
 
 ```json
 {
-  "name": "@antskill/YOUR-SKILL-NAME",        // Change this
+  "name": "@your-org/your-skill-name",        // Change this
   "version": "1.0.0",
   "description": "YOUR SKILL DESCRIPTION",     // Change this
   "author": "YOUR NAME",                       // Change this
@@ -91,6 +102,12 @@ Replace the following placeholders:
   }
 }
 ```
+
+**About npm scopes:**
+- Use a scope (`@your-org/skill-name`) if you want to organize skills under your organization
+- Use no scope (`skill-name`) for standalone packages
+- Popular scopes: `@your-company`, `@your-username`, or custom like `@claude-skills`
+- Scopes require configuration: `npm config set @your-org:registry https://registry.npmjs.org/`
 
 ### Step 2: Update SKILL.md
 
@@ -109,7 +126,7 @@ allowed-tools: Read, Bash          # Tools your skill can use
 ```json
 {
   "name": "your-skill-name",        // Must match SKILL.md name
-  "package": "@antskill/your-skill-name"
+  "package": "@your-org/your-skill-name"
 }
 ```
 
@@ -214,7 +231,7 @@ Claude will:
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g @antskill/your-skill
+npm install -g @your-org/your-skill
 ```
 
 Installs to: `~/.claude/skills/your-skill-name/`
@@ -224,7 +241,7 @@ Available: Across all projects for the current user
 ### Project-Level Installation
 
 ```bash
-npm install --save-dev @antskill/your-skill
+npm install --save-dev @your-org/your-skill
 ```
 
 Installs to: `.claude/skills/your-skill-name/`
@@ -307,7 +324,7 @@ npm config set prefix '~/.npm-global'
 export PATH=~/.npm-global/bin:$PATH
 
 # Or use sudo (not recommended)
-sudo npm install -g @antskill/your-skill
+sudo npm install -g @your-org/your-skill
 ```
 
 ### Skill Not Triggering
@@ -341,9 +358,9 @@ This template is [MIT licensed](LICENSE). Skills you create from this template c
 
 Skills built with this template:
 
-- `@antskill/git-commit-helper` - Generate conventional commit messages
-- `@antskill/code-reviewer` - Automated code review assistance
-- `@antskill/test-generator` - Generate test cases from code
+- `@your-org/git-commit-helper` - Generate conventional commit messages
+- `@your-org/code-reviewer` - Automated code review assistance
+- `@your-org/test-generator` - Generate test cases from code
 
 *(Add your skill here after publishing!)*
 

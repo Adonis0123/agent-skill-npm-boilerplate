@@ -19,18 +19,23 @@ Replace these placeholders throughout the project:
 
 | Find | Replace With | Files |
 |------|-------------|-------|
-| `YOUR-SKILL-NAME` | `my-awesome-skill` | `package.json`, `.claude-skill.json` |
+| `@your-org/your-skill-name` | `@mycompany/my-skill` or just `my-skill` | `package.json`, `.claude-skill.json` |
 | `YOUR SKILL DESCRIPTION` | `Your description` | `package.json`, `SKILL.md` |
 | `your-skill-name` | `my-awesome-skill` | `SKILL.md`, `.claude-skill.json` |
 | `YOUR NAME` | `Your Name` | `package.json` |
 | `YOUR-USERNAME` | `your-github-username` | `package.json`, `README.md` |
 | `YOUR-REPO-NAME` | `my-awesome-skill` | `package.json` |
 
+**💡 Tip: About npm package names**
+- With scope: `@mycompany/my-skill` (recommended for organization)
+- Without scope: `my-skill` (simpler, but name must be globally unique)
+- Learn more about scopes: https://docs.npmjs.com/cli/v9/using-npm/scope
+
 ### Quick Replace Command
 
 ```bash
 # macOS/Linux
-find . -type f -name "*.json" -o -name "*.md" | xargs sed -i '' 's/YOUR-SKILL-NAME/my-awesome-skill/g'
+find . -type f -name "*.json" -o -name "*.md" | xargs sed -i '' 's/@your-org/my-skill/g'
 
 # Or use your text editor's find-and-replace feature
 ```
@@ -137,7 +142,7 @@ Keep SKILL.md concise (<500 lines). Put detailed content in:
 ls -la ~/.claude/
 
 # Try sudo (if global)
-sudo npm install -g @antskill/my-skill
+sudo npm install -g @your-org/my-skill
 
 # Or fix npm permissions
 mkdir ~/.npm-global
@@ -154,7 +159,7 @@ npm config set prefix '~/.npm-global'
 
 ```bash
 # Check if name is available
-npm view @antskill/my-skill
+npm view @your-org/my-skill
 
 # Verify you're logged in
 npm whoami

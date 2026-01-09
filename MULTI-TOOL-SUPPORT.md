@@ -22,7 +22,7 @@ Edit `.claude-skill.json` to enable/disable targets:
 {
   "name": "your-skill-name",
   "version": "1.0.0",
-  "package": "@antskill/your-skill-name",
+  "package": "@your-org/your-skill-name",
   "targets": {
     "claude-code": {
       "enabled": true,
@@ -63,7 +63,7 @@ Edit `.claude-skill.json` to enable/disable targets:
 When you run `npm install`, the skill will be installed to **all enabled targets**:
 
 ```bash
-npm install -g @antskill/your-skill
+npm install -g @your-org/your-skill
 
 # Output:
 # 🚀 Installing AI Coding Skill...
@@ -100,7 +100,7 @@ npm install -g @antskill/your-skill
 Uninstallation removes the skill from all enabled targets:
 
 ```bash
-npm uninstall -g @antskill/your-skill
+npm uninstall -g @your-org/your-skill
 
 # Removes from both claude-code and cursor
 ```
@@ -253,10 +253,10 @@ You can override target enable/disable at install time:
 
 ```bash
 # Enable only specific targets
-SKILL_TARGETS="claude-code,cursor" npm install -g @antskill/your-skill
+SKILL_TARGETS="claude-code,cursor" npm install -g @your-org/your-skill
 
 # Disable specific targets
-SKILL_DISABLE="windsurf" npm install -g @antskill/your-skill
+SKILL_DISABLE="windsurf" npm install -g @your-org/your-skill
 ```
 
 (Feature to be implemented in future versions)

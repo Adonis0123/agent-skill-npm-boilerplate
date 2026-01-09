@@ -212,7 +212,7 @@ function updateManifest(skillsDir, config, targetName) {
   manifest.skills[config.name] = {
     version: config.version,
     installedAt: new Date().toISOString(),
-    package: config.package || `@antskill/${config.name}`,
+    package: config.package || config.name,
     path: path.join(skillsDir, config.name),
     target: targetName
   };

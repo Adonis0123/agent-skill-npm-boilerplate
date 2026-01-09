@@ -1,5 +1,5 @@
 {
-  "name": "@antskill/YOUR-SKILL-NAME",
+  "name": "@your-org/your-skill-name",
   "version": "1.0.0",
   "description": "YOUR SKILL DESCRIPTION - Brief description of what this skill does",
   "main": "index.js",
