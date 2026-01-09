@@ -1,23 +1,59 @@
 # Agent Skill NPM Boilerplate
 
-> 🚀 A template for creating and publishing Claude Code skills as npm packages
+> **Distribute AI agent skills like any other npm package**
 
-This is a GitHub template repository for creating [Claude Code skills](https://code.claude.com/docs/en/skills) that can be distributed and installed via npm. It provides a complete, production-ready structure following the official Claude Code skills specification.
+AI coding tools (Claude Code, Cursor, Windsurf) support custom "skills" - reusable instructions that extend agent capabilities. But distributing them means manual file copying, no versioning, and painful updates.
+
+**This template lets you publish skills to npm:**
+
+```bash
+# Install
+npm install -g @your-org/git-commit-helper
+
+# Update
+npm update -g @your-org/git-commit-helper
+
+# It just works - installs to ~/.claude/skills/, ~/.cursor/skills/, etc.
+```
+
+**Why this matters:** Skills become proper software artifacts with semantic versioning, dependency management, private registries, and global discovery. Same infrastructure that distributes React and Express.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Template](https://img.shields.io/badge/Template-Use%20This-brightgreen)](https://github.com/YOUR-USERNAME/agent-skill-npm-boilerplate/generate)
 
-## 🎯 What is this?
+---
 
-This boilerplate helps you create skills that can be installed via npm:
+**Quick start:** Fork this template, edit `SKILL.md`, run `npm publish`. Your skill is now installable worldwide.
+
+**Supports:** [Claude Code](https://code.claude.com/docs/en/skills), Cursor, Windsurf, and any tool following similar skill patterns. See [MULTI-TOOL-SUPPORT.md](MULTI-TOOL-SUPPORT.md).
+
+## 💡 Why npm for Skills?
+
+Manual skill distribution requires downloading files, copying to `~/.claude/skills/`, and repeating for every update. No versioning, no dependency management, no discovery.
+
+**npm solves this:**
 
 ```bash
-# Your users can install your skill like this
-npm install -g @your-org/your-skill
+# Install/update/uninstall with standard commands
+npm install -g @your-org/skill-name
+npm update -g @your-org/skill-name
+npm uninstall -g @your-org/skill-name
 
-# The skill is automatically installed to ~/.claude/skills/
-# and immediately available in Claude Code
+# Semantic versioning for controlled updates
+npm install @your-org/skill@^2.1.0
+
+# Project-specific skills (version-locked, committed to git)
+npm install --save-dev @your-org/skill-name
 ```
+
+**Core benefits:**
+- **Version control** - Semantic versioning, upgrade/rollback easily
+- **Global distribution** - Publish once, available worldwide via npm's CDN
+- **Discoverability** - Searchable on npmjs.com
+- **Enterprise ready** - Private registries for internal skills
+- **Ecosystem integration** - Works with CI/CD, monorepos, existing tooling
+
+Skills become first-class software artifacts, using the same infrastructure as React, Express, and millions of other packages.
 
 ## ✨ Features
 
