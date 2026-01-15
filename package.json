@@ -1,7 +1,7 @@
 {
-  "name": "@your-org/your-skill-name",
-  "version": "1.0.0",
-  "description": "YOUR SKILL DESCRIPTION - Brief description of what this skill does",
+  "name": "@anthropic-skills/weekly-report",
+  "version": "1.0.6",
+  "description": "Claude Code Skill - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤",
   "main": "index.js",
   "scripts": {
     "postinstall": "node install-skill.js",
@@ -11,12 +11,12 @@
   },
   "files": [
     "SKILL.md",
-    "reference.md",
-    "examples.md",
-    "scripts/",
+    "references/",
+    "src/",
     "install-skill.js",
     "uninstall-skill.js",
-    ".claude-skill.json"
+    ".claude-skill.json",
+    "utils.js"
   ],
   "keywords": [
     "claude-code",
@@ -24,18 +24,21 @@
     "ai-assistant",
     "agent-skill",
     "claude",
-    "YOUR-KEYWORDS-HERE"
+    "weekly-report",
+    "git",
+    "commit-analyzer",
+    "automation"
   ],
-  "author": "YOUR NAME <your.email@example.com>",
+  "author": "adonis",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git"
+    "url": "https://github.com/Adonis0123/weekly-flow.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR-USERNAME/YOUR-REPO-NAME/issues"
+    "url": "https://github.com/Adonis0123/weekly-flow/issues"
   },
-  "homepage": "https://github.com/YOUR-USERNAME/YOUR-REPO-NAME#readme",
+  "homepage": "https://github.com/Adonis0123/weekly-flow#readme",
   "engines": {
     "node": ">=14.0.0"
   }

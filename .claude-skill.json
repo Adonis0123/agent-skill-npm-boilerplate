@@ -1,14 +1,10 @@
 {
-  "name": "your-skill-name",
-  "version": "1.0.0",
-  "package": "@your-org/your-skill-name",
+  "name": "weekly-report",
+  "version": "1.0.6",
+  "package": "@anthropic-skills/weekly-report",
   "files": {
-    "reference.md": "reference.md",
-    "examples.md": "examples.md",
-    "scripts": "scripts/"
-  },
-  "hooks": {
-    "postinstall": "bash scripts/setup.sh"
+    "references": "references/",
+    "src": "src/"
   },
   "targets": {
     "claude-code": {
@@ -19,7 +15,7 @@
       }
     },
     "cursor": {
-      "enabled": false,
+      "enabled": true,
       "paths": {
         "global": ".cursor/skills",
         "project": ".cursor/skills"

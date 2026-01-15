@@ -1,0 +1,11 @@
+{
+  "skills": {
+    "weekly-report": {
+      "version": "1.0.6",
+      "installedAt": "2026-01-15T07:28:27.232Z",
+      "package": "@anthropic-skills/weekly-report",
+      "path": "/Users/adonis/coding/agent-skill-npm-boilerplate/.cursor/skills/weekly-report",
+      "target": "cursor"
+    }
+  }
+}
