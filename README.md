@@ -71,6 +71,65 @@ npm uninstall -g @adonis0123/weekly-report
 - 8 个优先级分类
 - 详细代码示例
 
+---
+
+## 开发者指南
+
+### 发布流程
+
+#### 1. 确保已登录 npm
+
+```bash
+npm login
+# 输入用户名、密码、邮箱，完成 2FA 验证
+```
+
+#### 2. 更新版本号
+
+```bash
+# 进入要发布的包目录
+cd packages/weekly-report
+
+# 更新版本（patch: 1.0.0 → 1.0.1）
+npm version patch
+
+# 或手动编辑 package.json 中的 version 字段
+```
+
+#### 3. 发布单个包
+
+```bash
+cd packages/weekly-report
+npm publish --access public
+```
+
+#### 4. 批量发布所有包
+
+```bash
+# 在根目录执行
+pnpm publish:all
+```
+
+#### 5. 验证发布
+
+```bash
+# 查看 npm 上的包信息
+npm view @adonis0123/weekly-report
+
+# 测试安装
+npm install -g @adonis0123/weekly-report
+```
+
+### 添加新技能
+
+1. 创建 `packages/new-skill/` 目录
+2. 复制现有包的 `install-skill.js`、`uninstall-skill.js`、`utils.js`
+3. 创建 `SKILL.md`（技能定义）
+4. 创建 `package.json` 和 `.claude-skill.json`
+5. 创建 `README.md`
+6. 测试：`npm test`
+7. 发布：`npm publish --access public`
+
 ## License
 
 MIT

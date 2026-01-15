@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/agent-browser",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Claude Code Skill - 浏览器自动化，支持网页测试、表单填写、截图和数据提取",
   "scripts": {
     "postinstall": "node install-skill.js",
@@ -26,7 +26,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Adonis0123/claude-skills.git",
+    "url": "git+https://github.com/Adonis0123/claude-skills.git",
     "directory": "packages/agent-browser"
   },
   "homepage": "https://github.com/Adonis0123/claude-skills/tree/main/packages/agent-browser"

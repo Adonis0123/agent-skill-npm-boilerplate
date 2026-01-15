@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/react-best-practices",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code Skill - React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering",
   "scripts": {
     "postinstall": "node install-skill.js",
@@ -30,7 +30,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Adonis0123/claude-skills.git",
+    "url": "git+https://github.com/Adonis0123/claude-skills.git",
     "directory": "packages/react-best-practices"
   },
   "homepage": "https://github.com/Adonis0123/claude-skills/tree/main/packages/react-best-practices"

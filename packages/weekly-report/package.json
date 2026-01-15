@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/weekly-report",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Claude Code Skill - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤",
   "scripts": {
     "postinstall": "node install-skill.js",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Adonis0123/claude-skills.git",
+    "url": "git+https://github.com/Adonis0123/claude-skills.git",
     "directory": "packages/weekly-report"
   },
   "homepage": "https://github.com/Adonis0123/claude-skills/tree/main/packages/weekly-report"
