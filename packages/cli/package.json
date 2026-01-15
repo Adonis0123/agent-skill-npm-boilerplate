@@ -1,0 +1,48 @@
+{
+  "name": "@adonis0123/skill-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "skill": "dist/index.js",
+    "askill": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node dist/index.js --help",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "claude-code",
+    "cursor",
+    "codex",
+    "copilot",
+    "skill",
+    "ai-agent",
+    "cli"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/cli",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "degit": "^2.8.4",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/degit": "^2.8.6",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

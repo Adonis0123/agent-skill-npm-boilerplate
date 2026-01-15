@@ -1,50 +1,129 @@
-# Claude Skills
+# Agent Skills
 
-> 一系列 Claude Code 技能的 npm 包，可按需安装
+> AI Agent 技能管理工具集 - 包含 CLI 工具和多个可安装的技能包
 
-## 可用技能
+## 🚀 快速开始
+
+### 方式一：使用 CLI 工具（推荐）
+
+```bash
+# 安装 CLI
+npm i -g @adonis0123/skill-cli
+
+# 安装技能
+skill install anthropics/skills/skills/pdf
+
+# 列出已安装技能
+skill list
+
+# 更新所有技能
+skill update
+```
+
+### 方式二：直接安装技能包
+
+```bash
+# 安装单个技能
+npm i -g @adonis0123/weekly-report
+
+# 安装后自动部署到 ~/.claude/skills/
+```
+
+---
+
+## 📦 包含的包
 
 | 包名 | 描述 | 安装命令 |
 |------|------|----------|
+| [@adonis0123/skill-cli](./packages/cli) | CLI 工具，管理 AI Agent 技能 | `npm i -g @adonis0123/skill-cli` |
 | [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报 | `npm i -g @adonis0123/weekly-report` |
 | [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化（测试、截图、数据提取） | `npm i -g @adonis0123/agent-browser` |
 | [@adonis0123/react-best-practices](./packages/react-best-practices) | React/Next.js 性能优化最佳实践 | `npm i -g @adonis0123/react-best-practices` |
 
-## 安装
+---
+
+## 🛠️ CLI 工具使用
+
+### 安装技能
 
 ```bash
-# 按需安装单个技能
-npm install -g @adonis0123/weekly-report
+# 从 GitHub (degit shorthand)
+skill install anthropics/skills/skills/pdf
 
-# 或一次安装全部
-npm install -g @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices
+# 从完整 GitHub URL
+skill install https://github.com/anthropics/skills/tree/main/skills/pdf
+
+# 从本地目录
+skill install ./my-skill
+
+# 安装到特定平台
+skill install anthropics/skills/skills/pdf -t cursor
+
+# 安装到所有平台
+skill install anthropics/skills/skills/pdf --all
+
+# 强制重新安装
+skill install anthropics/skills/skills/pdf --force
+
+# 安装到项目级目录（而非全局）
+skill install anthropics/skills/skills/pdf --local
 ```
 
-安装后技能会自动部署到 `~/.claude/skills/`，在 Claude Code 中即可使用。
-
-## 使用
-
-在 Claude Code 中：
-
-```
-/weekly-report          # 生成周报
-/agent-browser          # 浏览器自动化
-/react-best-practices   # React 最佳实践指导
-```
-
-## 更新
+### 管理技能
 
 ```bash
-npm update -g @adonis0123/weekly-report
+# 列出所有已安装技能
+skill list
+
+# 显示安装路径
+skill list --paths
+
+# 查看技能详情
+skill info pdf
+
+# 更新特定技能
+skill update pdf
+
+# 更新所有技能
+skill update
+
+# 卸载技能
+skill uninstall pdf
 ```
 
-## 卸载
+### 多平台支持
+
+| 平台 | 参数 | 全局目录 | 项目目录 |
+|------|------|----------|----------|
+| Claude Code | `-t claude` (默认) | `~/.claude/skills` | `.claude/skills` |
+| Cursor | `-t cursor` | `~/.cursor/skills` | `.cursor/skills` |
+| Codex | `-t codex` | `~/.codex/skills` | `.codex/skills` |
+| GitHub Copilot | `-t copilot` | `~/.copilot/skills` | `.copilot/skills` |
 
 ```bash
-npm uninstall -g @adonis0123/weekly-report
+# 安装到 Cursor
+skill install anthropics/skills/skills/pdf -t cursor
+
+# 安装到所有平台
+skill install anthropics/skills/skills/pdf --all
+
+# 列出 Cursor 的技能
+skill list -t cursor
 ```
 
-## 技能详情
+### 所有命令
+
+| 命令 | 别名 | 描述 |
+|------|------|------|
+| `skill install <source>` | `i` | 从 Git URL、degit shorthand 或本地目录安装技能 |
+| `skill list` | `ls` | 列出已安装的技能 |
+| `skill info <skill>` | - | 显示技能详情 |
+| `skill update [skill]` | `up` | 更新一个或所有技能 |
+| `skill uninstall <skill>` | `rm` | 卸载技能 |
+
+---
+
+## 📚 技能详情
 
 ### weekly-report
 
@@ -53,6 +132,12 @@ npm uninstall -g @adonis0123/weekly-report
 - 支持多仓库汇总
 - 智能过滤琐碎提交（typo、merge、format）
 - 灵活时间范围（本周、上周、自定义）
+
+```bash
+npm i -g @adonis0123/weekly-report
+```
+
+在 Claude Code 中使用：`/weekly-report`
 
 ### agent-browser
 
@@ -63,73 +148,112 @@ npm uninstall -g @adonis0123/weekly-report
 - 截图
 - 数据提取
 
+```bash
+npm i -g @adonis0123/agent-browser
+```
+
+在 Claude Code 中使用：`/agent-browser`
+
 ### react-best-practices
 
 来自 Vercel Engineering 的 React/Next.js 性能优化指南。
 
-- 45 条优化规则
-- 8 个优先级分类
+- 45 条优化规则，8 个优先级分类
 - 详细代码示例
+- **安装时自动从上游仓库拉取最新版本**
+
+```bash
+npm i -g @adonis0123/react-best-practices
+```
+
+在 Claude Code 中使用：`/react-best-practices`
 
 ---
 
-## 开发者指南
+## 🔧 开发者指南
 
-### 发布流程
+### 项目结构
 
-#### 1. 确保已登录 npm
-
-```bash
-npm login
-# 输入用户名、密码、邮箱，完成 2FA 验证
+```
+agent-skill-npm-boilerplate/
+├── package.json              # 根配置（private: true）
+├── pnpm-workspace.yaml       # workspace 配置
+└── packages/
+    ├── cli/                  # CLI 工具
+    │   ├── src/
+    │   │   ├── index.ts      # 主入口
+    │   │   ├── types.ts      # 类型定义
+    │   │   ├── utils.ts      # 工具函数
+    │   │   └── commands/     # 命令实现
+    │   └── package.json
+    ├── weekly-report/        # 周报技能
+    ├── agent-browser/        # 浏览器自动化技能
+    └── react-best-practices/ # React 最佳实践技能
 ```
 
-#### 2. 更新版本号
+### 常用命令
 
 ```bash
-# 进入要发布的包目录
-cd packages/weekly-report
+# 安装依赖
+pnpm install
 
-# 更新版本（patch: 1.0.0 → 1.0.1）
-npm version patch
+# 构建 CLI
+cd packages/cli && pnpm build
 
-# 或手动编辑 package.json 中的 version 字段
-```
+# 测试所有包
+pnpm test:all
 
-#### 3. 发布单个包
-
-```bash
-cd packages/weekly-report
-npm publish --access public
-```
-
-#### 4. 批量发布所有包
-
-```bash
-# 在根目录执行
+# 发布所有包
 pnpm publish:all
-```
 
-#### 5. 验证发布
-
-```bash
-# 查看 npm 上的包信息
-npm view @adonis0123/weekly-report
-
-# 测试安装
-npm install -g @adonis0123/weekly-report
+# 发布单个包
+pnpm release:weekly-report
+pnpm release:agent-browser
+pnpm release:react-best-practices
 ```
 
 ### 添加新技能
 
 1. 创建 `packages/new-skill/` 目录
-2. 复制现有包的 `install-skill.js`、`uninstall-skill.js`、`utils.js`
-3. 创建 `SKILL.md`（技能定义）
-4. 创建 `package.json` 和 `.claude-skill.json`
-5. 创建 `README.md`
-6. 测试：`npm test`
-7. 发布：`npm publish --access public`
+2. 复制现有包的结构：
+   - `install-skill.js` - 安装脚本
+   - `uninstall-skill.js` - 卸载脚本
+   - `utils.js` - 工具函数
+   - `.claude-skill.json` - 技能配置
+   - `SKILL.md` - 技能定义（核心）
+   - `package.json` - npm 包配置
+3. 测试：`npm test`
+4. 发布：`npm publish --access public`
 
-## License
+### 技能包结构
+
+```
+packages/skill-name/
+├── package.json          # npm 包配置
+├── .claude-skill.json    # 技能安装配置
+├── SKILL.md              # 技能定义（核心）
+├── install-skill.js      # 安装脚本
+├── uninstall-skill.js    # 卸载脚本
+├── utils.js              # 工具函数
+└── README.md             # 说明文档
+```
+
+### 发布流程
+
+```bash
+# 1. 登录 npm
+npm login
+
+# 2. 更新版本并发布单个包
+pnpm release:weekly-report
+
+# 或批量发布
+pnpm version:patch  # 更新所有包版本
+pnpm publish:all    # 发布所有包
+```
+
+---
+
+## 📄 License
 
 MIT
