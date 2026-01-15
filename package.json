@@ -3,11 +3,13 @@
   "private": true,
   "description": "Claude Code Skills Collection - 一系列 Claude Code 技能的 npm 包",
   "scripts": {
+    "sync": "npx tsx scripts/sync-shared.ts",
+    "build": "pnpm sync",
     "test:all": "pnpm -r test",
     "version:patch": "pnpm -r exec npm version patch --no-git-tag-version",
     "version:minor": "pnpm -r exec npm version minor --no-git-tag-version",
     "version:major": "pnpm -r exec npm version major --no-git-tag-version",
-    "publish:all": "pnpm -r publish --access public --no-git-checks",
+    "publish:all": "pnpm sync && pnpm -r publish --access public --no-git-checks",
     "release:patch": "pnpm version:patch && git add -A && git commit -m 'chore: bump versions' && pnpm publish:all && git push",
     "release:minor": "pnpm version:minor && git add -A && git commit -m 'chore: bump versions' && pnpm publish:all && git push",
     "release:major": "pnpm version:major && git add -A && git commit -m 'chore: bump versions' && pnpm publish:all && git push",
@@ -20,5 +22,10 @@
     "url": "https://github.com/Adonis0123/agent-skill-npm-boilerplate.git"
   },
   "author": "adonis",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
 }

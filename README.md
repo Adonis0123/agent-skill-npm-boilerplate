@@ -178,6 +178,14 @@ npm i -g @adonis0123/react-best-practices
 agent-skill-npm-boilerplate/
 ├── package.json              # 根配置（private: true）
 ├── pnpm-workspace.yaml       # workspace 配置
+├── shared/                   # 共享源码（TypeScript）
+│   └── src/
+│       ├── types.ts          # 类型定义
+│       ├── utils.ts          # 工具函数
+│       ├── install-skill.ts  # 安装脚本
+│       └── uninstall-skill.ts# 卸载脚本
+├── scripts/
+│   └── sync-shared.ts        # 同步脚本（esbuild 打包）
 └── packages/
     ├── cli/                  # CLI 工具
     │   ├── src/
@@ -191,11 +199,28 @@ agent-skill-npm-boilerplate/
     └── react-best-practices/ # React 最佳实践技能
 ```
 
+### 共享代码架构
+
+技能包的安装/卸载脚本使用 TypeScript 编写，通过 esbuild 打包后同步到各包：
+
+```
+shared/src/*.ts  →  esbuild 打包  →  packages/*/install-skill.js
+                                  →  packages/*/uninstall-skill.js
+```
+
+**特性：**
+- **强类型**：所有代码用 TypeScript 编写
+- **自动检测模式**：根据 `.claude-skill.json` 中的 `remoteSource` 字段自动选择本地或远程模式
+- **单文件打包**：每个包的脚本是独立的单文件，无需处理模块路径
+
 ### 常用命令
 
 ```bash
 # 安装依赖
 pnpm install
+
+# 同步共享代码到各包（修改 shared/ 后需要执行）
+pnpm sync
 
 # 构建 CLI
 cd packages/cli && pnpm build
@@ -203,7 +228,7 @@ cd packages/cli && pnpm build
 # 测试所有包
 pnpm test:all
 
-# 发布所有包
+# 发布所有包（自动执行 sync）
 pnpm publish:all
 
 # 发布单个包
@@ -215,15 +240,13 @@ pnpm release:react-best-practices
 ### 添加新技能
 
 1. 创建 `packages/new-skill/` 目录
-2. 复制现有包的结构：
-   - `install-skill.js` - 安装脚本
-   - `uninstall-skill.js` - 卸载脚本
-   - `utils.js` - 工具函数
+2. 创建必要文件：
    - `.claude-skill.json` - 技能配置
    - `SKILL.md` - 技能定义（核心）
    - `package.json` - npm 包配置
-3. 测试：`npm test`
-4. 发布：`npm publish --access public`
+3. 运行 `pnpm sync` 自动生成安装脚本
+4. 测试：`npm test`
+5. 发布：`npm publish --access public`
 
 ### 技能包结构
 
@@ -232,10 +255,34 @@ packages/skill-name/
 ├── package.json          # npm 包配置
 ├── .claude-skill.json    # 技能安装配置
 ├── SKILL.md              # 技能定义（核心）
-├── install-skill.js      # 安装脚本
-├── uninstall-skill.js    # 卸载脚本
-├── utils.js              # 工具函数
+├── install-skill.js      # ← 自动生成（pnpm sync）
+├── uninstall-skill.js    # ← 自动生成（pnpm sync）
 └── README.md             # 说明文档
+```
+
+### .claude-skill.json 配置
+
+```jsonc
+{
+  "name": "skill-name",           // 技能名称
+  "version": "1.0.0",             // 版本号
+  "package": "@scope/skill-name", // npm 包名
+  "remoteSource": "owner/repo/path", // 可选：远程源（有此字段则启用远程模式）
+  "files": {                      // 可选：额外文件映射
+    "src": "src/",
+    "config.json": "config.json"
+  },
+  "targets": {                    // 安装目标平台
+    "claude-code": {
+      "enabled": true,
+      "paths": { "global": ".claude/skills", "project": ".claude/skills" }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": { "global": ".cursor/skills", "project": ".cursor/skills" }
+    }
+  }
+}
 ```
 
 ### 发布流程
@@ -249,7 +296,7 @@ pnpm release:weekly-report
 
 # 或批量发布
 pnpm version:patch  # 更新所有包版本
-pnpm publish:all    # 发布所有包
+pnpm publish:all    # 发布所有包（自动执行 sync）
 ```
 
 ---

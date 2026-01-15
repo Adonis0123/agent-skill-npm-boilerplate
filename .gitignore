@@ -42,11 +42,17 @@ logs/
 tmp/
 temp/
 
-# Test installation outputs
+# Test installation outputs (root)
 .claude/skills/
 .cursor/skills/
 .windsurf/skills/
 .aider/skills/
+
+# Test installation outputs (package directories - created during pnpm install)
+packages/*/.claude/
+packages/*/.cursor/
+packages/*/.windsurf/
+packages/*/.aider/
 
 # Claude Code local settings
 .claude/settings.local.json
