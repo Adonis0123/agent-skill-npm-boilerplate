@@ -30,8 +30,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Adonis0123/claude-skills.git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
     "directory": "packages/react-best-practices"
   },
-  "homepage": "https://github.com/Adonis0123/claude-skills/tree/main/packages/react-best-practices"
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/react-best-practices"
 }
