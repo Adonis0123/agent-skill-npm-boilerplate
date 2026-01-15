@@ -3,10 +3,87 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { execSync } = require('child_process');
 
-const { getEnabledTargets,extractSkillName, detectInstallLocation } = require('./utils');
+const { getEnabledTargets, extractSkillName, detectInstallLocation } = require('./utils');
 
-function installToTarget(target, config) {
+// Default remote source (can be overridden in .claude-skill.json)
+const DEFAULT_REMOTE_SOURCE = 'vercel-labs/agent-skills/skills/react-best-practices';
+
+/**
+ * Fetch skill files from remote repository using degit
+ * @param {string} tempDir - Temporary directory to clone into
+ * @param {string} remoteSource - Remote source path (degit format)
+ * @returns {boolean} - Whether fetch was successful
+ */
+function fetchFromRemote(tempDir, remoteSource) {
+  try {
+    console.log(`  🌐 Fetching latest from ${remoteSource}...`);
+
+    // Use npx degit to clone without git history
+    execSync(`npx degit ${remoteSource} "${tempDir}" --force`, {
+      stdio: 'pipe',
+      timeout: 60000 // 60 second timeout
+    });
+
+    // Verify SKILL.md exists in fetched content
+    if (fs.existsSync(path.join(tempDir, 'SKILL.md'))) {
+      console.log('  ✓ Fetched latest version from remote');
+      return true;
+    }
+
+    console.warn('  ⚠ Remote fetch succeeded but SKILL.md not found');
+    return false;
+  } catch (error) {
+    console.warn(`  ⚠ Could not fetch from remote: ${error.message}`);
+    console.log('  ℹ Using bundled version as fallback');
+    return false;
+  }
+}
+
+/**
+ * Get the source directory for skill files
+ * Tries remote first, falls back to local bundled files
+ * @param {string} remoteSource - Remote source to fetch from
+ * @returns {{ sourceDir: string, cleanup: () => void, isRemote: boolean }}
+ */
+function getSourceDir(remoteSource) {
+  // Create temp directory for remote fetch
+  const tempDir = path.join(os.tmpdir(), `skill-fetch-${Date.now()}`);
+
+  // Try to fetch from remote
+  const remoteSuccess = fetchFromRemote(tempDir, remoteSource);
+
+  if (remoteSuccess) {
+    return {
+      sourceDir: tempDir,
+      cleanup: () => {
+        try {
+          fs.rmSync(tempDir, { recursive: true, force: true });
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      },
+      isRemote: true
+    };
+  }
+
+  // Cleanup temp dir if remote failed
+  try {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  } catch (e) {
+    // Ignore
+  }
+
+  // Fall back to local bundled files
+  return {
+    sourceDir: __dirname,
+    cleanup: () => {},
+    isRemote: false
+  };
+}
+
+function installToTarget(target, config, sourceDir) {
   console.log(`\n📦 Installing to ${target.name}...`);
 
   // Check if this is a global installation
@@ -39,38 +116,42 @@ function installToTarget(target, config) {
   }
 
   // Copy SKILL.md (required)
-  const skillMdSource = path.join(__dirname, 'SKILL.md');
+  const skillMdSource = path.join(sourceDir, 'SKILL.md');
   if (!fs.existsSync(skillMdSource)) {
     throw new Error('SKILL.md is required but not found');
   }
   fs.copyFileSync(skillMdSource, path.join(targetDir, 'SKILL.md'));
   console.log('  ✓ Copied SKILL.md');
 
-  // Copy other files
-  if (config.files) {
-    Object.entries(config.files).forEach(([source, dest]) => {
-      const sourcePath = path.join(__dirname, source);
-      if (!fs.existsSync(sourcePath)) {
-        console.warn(`  ⚠ Warning: ${source} not found, skipping`);
-        return;
-      }
+  // Copy other files from source directory
+  const filesToCopy = config.files || {
+    'AGENTS.md': 'AGENTS.md',
+    'README.md': 'README.md',
+    'rules': 'rules/'
+  };
 
-      const destPath = path.join(targetDir, dest);
+  Object.entries(filesToCopy).forEach(([source, dest]) => {
+    const sourcePath = path.join(sourceDir, source);
+    if (!fs.existsSync(sourcePath)) {
+      console.warn(`  ⚠ Warning: ${source} not found, skipping`);
+      return;
+    }
 
-      if (fs.statSync(sourcePath).isDirectory()) {
-        copyDir(sourcePath, destPath);
-        console.log(`  ✓ Copied directory: ${source}`);
-      } else {
-        // Ensure target directory exists
-        const destDir = path.dirname(destPath);
-        if (!fs.existsSync(destDir)) {
-          fs.mkdirSync(destDir, { recursive: true });
-        }
-        fs.copyFileSync(sourcePath, destPath);
-        console.log(`  ✓ Copied file: ${source}`);
+    const destPath = path.join(targetDir, dest);
+
+    if (fs.statSync(sourcePath).isDirectory()) {
+      copyDir(sourcePath, destPath);
+      console.log(`  ✓ Copied directory: ${source}`);
+    } else {
+      // Ensure target directory exists
+      const destDir = path.dirname(destPath);
+      if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
       }
-    });
-  }
+      fs.copyFileSync(sourcePath, destPath);
+      console.log(`  ✓ Copied file: ${source}`);
+    }
+  });
 
   // Update manifest
   updateManifest(location.base, config, target.name);
@@ -78,7 +159,6 @@ function installToTarget(target, config) {
   // Run postinstall hooks
   if (config.hooks && config.hooks.postinstall) {
     console.log('  🔧 Running postinstall hook...');
-    const { execSync } = require('child_process');
     try {
       execSync(config.hooks.postinstall, {
         cwd: targetDir,
@@ -118,32 +198,49 @@ function installSkill() {
     console.log(`  • ${target.name}`);
   });
 
-  // Install to all enabled targets
-  const installedPaths = [];
-  for (const target of enabledTargets) {
-    try {
-      const installPath = installToTarget(target, config);
-      installedPaths.push({ target: target.name, path: installPath });
-    } catch (error) {
-      console.error(`\n❌ Failed to install to ${target.name}:`, error.message);
-    }
+  // Get remote source from config or use default
+  const remoteSource = config.remoteSource || DEFAULT_REMOTE_SOURCE;
+
+  // Get source directory (remote or local fallback)
+  const { sourceDir, cleanup, isRemote } = getSourceDir(remoteSource);
+
+  if (isRemote) {
+    console.log(`\n📡 Source: Remote (${remoteSource})`);
+  } else {
+    console.log('\n📦 Source: Bundled (local fallback)');
   }
 
-  // Summary
-  console.log('\n' + '='.repeat(60));
-  console.log('✅ Installation Complete!');
-  console.log('='.repeat(60));
+  try {
+    // Install to all enabled targets
+    const installedPaths = [];
+    for (const target of enabledTargets) {
+      try {
+        const installPath = installToTarget(target, config, sourceDir);
+        installedPaths.push({ target: target.name, path: installPath });
+      } catch (error) {
+        console.error(`\n❌ Failed to install to ${target.name}:`, error.message);
+      }
+    }
 
-  if (installedPaths.length > 0) {
-    console.log('\nInstalled to:');
-    installedPaths.forEach(({ target, path: installPath }) => {
-      console.log(`  • ${target}: ${installPath}`);
-    });
+    // Summary
+    console.log('\n' + '='.repeat(60));
+    console.log('✅ Installation Complete!');
+    console.log('='.repeat(60));
 
-    console.log('\n📖 Next Steps:');
-    console.log('  1. Restart your AI coding tool(s)');
-    console.log('  2. Ask: "What skills are available?"');
-    console.log('  3. Start using your skill!');
+    if (installedPaths.length > 0) {
+      console.log('\nInstalled to:');
+      installedPaths.forEach(({ target, path: installPath }) => {
+        console.log(`  • ${target}: ${installPath}`);
+      });
+
+      console.log('\n📖 Next Steps:');
+      console.log('  1. Restart your AI coding tool(s)');
+      console.log('  2. Ask: "What skills are available?"');
+      console.log('  3. Start using your skill!');
+    }
+  } finally {
+    // Cleanup temp directory
+    cleanup();
   }
 }
 
@@ -186,7 +283,8 @@ function updateManifest(skillsDir, config, targetName) {
     installedAt: new Date().toISOString(),
     package: config.package || config.name,
     path: path.join(skillsDir, skillName),
-    target: targetName
+    target: targetName,
+    source: config.remoteSource || DEFAULT_REMOTE_SOURCE
   };
 
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));

@@ -1,7 +1,8 @@
 {
   "name": "react-best-practices",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "package": "@adonis0123/react-best-practices",
+  "remoteSource": "vercel-labs/agent-skills/skills/react-best-practices",
   "files": {
     "AGENTS.md": "AGENTS.md",
     "README.md": "README.md",
