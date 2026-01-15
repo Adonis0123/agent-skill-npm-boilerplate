@@ -1,7 +1,7 @@
 {
   "name": "weekly-report",
   "version": "1.0.6",
-  "package": "@anthropic-skills/weekly-report",
+  "package": "@adonis0123/weekly-report",
   "files": {
     "references": "references/",
     "src": "src/"
