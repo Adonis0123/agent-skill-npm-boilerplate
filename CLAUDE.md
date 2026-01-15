@@ -2,71 +2,68 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## 项目概述
 
-This is a **template repository** for creating npm-distributable AI coding agent skills. It enables packaging Claude Code skills (and other AI tool skills) as npm packages for easy installation, versioning, and distribution.
+这是一个 **Monorepo**，管理多个 Claude Code 技能的 npm 包：
 
-## Commands
+- `@adonis0123/weekly-report` - 周报生成
+- `@adonis0123/agent-browser` - 浏览器自动化
+- `@adonis0123/react-best-practices` - React 最佳实践
 
-```bash
-# Test installation (runs install-skill.js and installs to ~/.claude/skills/)
-npm test
+## 项目结构
 
-# Manual installation test
-node install-skill.js
-
-# Test uninstallation
-node uninstall-skill.js
-
-# Verify installed skill
-ls -la ~/.claude/skills/your-skill-name/
-cat ~/.claude/skills/your-skill-name/SKILL.md
+```
+claude-skills/
+├── package.json              # 根配置（private: true）
+├── pnpm-workspace.yaml       # workspace 配置
+└── packages/
+    ├── weekly-report/        # 周报技能
+    ├── agent-browser/        # 浏览器自动化技能
+    └── react-best-practices/ # React 最佳实践技能
 ```
 
-## Architecture
+## 常用命令
 
-### Core Files
+```bash
+# 测试所有包
+pnpm test:all
 
-- **`install-skill.js`** - npm postinstall hook that copies skill files to target directories (e.g., `~/.claude/skills/`)
-- **`uninstall-skill.js`** - npm preuninstall hook that removes skill files from target directories
-- **`utils.js`** - Shared utilities: `getEnabledTargets()`, `extractSkillName()`, `detectInstallLocation()`
-- **`.claude-skill.json`** - Configuration defining skill name, files to copy, hooks, and target AI tools
+# 测试单个包
+cd packages/agent-browser && npm test
 
-### Installation Flow
+# 发布所有包
+pnpm publish:all
 
-1. User runs `npm install -g @org/skill-name`
-2. npm triggers `postinstall` hook → `install-skill.js`
-3. Script reads `.claude-skill.json` to get enabled targets and files
-4. Detects global vs project install via `process.env.npm_config_global`
-5. Copies `SKILL.md` and configured files to each target's skills directory
-6. Updates `.skills-manifest.json` in the skills directory
+# 发布单个包
+cd packages/weekly-report && npm publish --access public
+```
 
-### Multi-Tool Support
+## 添加新技能
 
-Configured in `.claude-skill.json` under `targets`. Each target has:
-- `enabled`: boolean to include/exclude
-- `paths.global`: path relative to home directory for global installs
-- `paths.project`: path relative to project root for local installs
+1. 创建 `packages/new-skill/` 目录
+2. 复制 `install-skill.js`、`uninstall-skill.js`、`utils.js`
+3. 创建 `SKILL.md`（技能定义）
+4. 创建 `package.json` 和 `.claude-skill.json`
+5. 测试：`npm test`
+6. 发布：`npm publish --access public`
 
-Default targets: Claude Code (enabled), Cursor, Windsurf, Aider (disabled).
+## 子包结构
 
-### Key Functions (utils.js)
+每个技能包都包含：
 
-- `extractSkillName(packageName)` - Strips npm scope prefix (e.g., `@org/skill` → `skill`)
-- `detectInstallLocation(targetPaths, isGlobal)` - Resolves installation directory, handles project root detection for local installs
-- `getEnabledTargets(config)` - Returns array of enabled target configurations
+```
+packages/skill-name/
+├── package.json          # npm 包配置
+├── .claude-skill.json    # 技能安装配置
+├── SKILL.md              # 技能定义（核心）
+├── install-skill.js      # 安装脚本
+├── uninstall-skill.js    # 卸载脚本
+└── utils.js              # 工具函数
+```
 
-## Creating a Skill
+## 安装脚本工作原理
 
-1. Update `package.json`: name, description, author, repository
-2. Update `.claude-skill.json`: skill name, package name, enabled targets
-3. Edit `SKILL.md`: frontmatter (name, description, allowed-tools) and instructions
-4. Add supporting files to `files` in `.claude-skill.json` if needed
-5. Test with `npm test`
-6. Publish with `npm publish --access public`
-
-## Conventions
-
-- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, etc.
-- SKILL.md should stay under 500 lines; use `reference.md` and `examples.md` for detailed content
-- Skill names in `.claude-skill.json` must match the `name` field in SKILL.md frontmatter
+1. `npm install -g @adonis0123/skill` 触发 `postinstall`
+2. `install-skill.js` 读取 `.claude-skill.json`
+3. 复制 `SKILL.md` 和配置的文件到 `~/.claude/skills/skill-name/`
+4. 用户即可在 Claude Code 中使用 `/skill-name`

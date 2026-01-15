@@ -1,0 +1,14 @@
+{
+  "name": "agent-browser",
+  "version": "1.0.0",
+  "package": "@adonis0123/agent-browser",
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    }
+  }
+}

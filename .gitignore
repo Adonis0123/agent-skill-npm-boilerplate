@@ -41,3 +41,12 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+# Test installation outputs
+.claude/skills/
+.cursor/skills/
+.windsurf/skills/
+.aider/skills/
+
+# Claude Code local settings
+.claude/settings.local.json

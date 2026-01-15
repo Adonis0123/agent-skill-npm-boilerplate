@@ -1,0 +1,19 @@
+{
+  "name": "react-best-practices",
+  "version": "1.0.0",
+  "package": "@adonis0123/react-best-practices",
+  "files": {
+    "AGENTS.md": "AGENTS.md",
+    "README.md": "README.md",
+    "rules": "rules/"
+  },
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@adonis0123/react-best-practices",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "AGENTS.md",
+    "README.md",
+    "rules/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json",
+    "utils.js"
+  ],
+  "keywords": [
+    "claude-code",
+    "skill",
+    "react",
+    "nextjs",
+    "performance",
+    "best-practices",
+    "vercel"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Adonis0123/claude-skills.git",
+    "directory": "packages/react-best-practices"
+  },
+  "homepage": "https://github.com/Adonis0123/claude-skills/tree/main/packages/react-best-practices"
+}

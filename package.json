@@ -1,45 +1,15 @@
 {
-  "name": "@adonis0123/weekly-report",
-  "version": "1.0.6",
-  "description": "Claude Code Skill - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤",
-  "main": "index.js",
+  "name": "claude-skills",
+  "private": true,
+  "description": "Claude Code Skills Collection - 一系列 Claude Code 技能的 npm 包",
   "scripts": {
-    "postinstall": "node install-skill.js",
-    "preuninstall": "node uninstall-skill.js",
-    "test": "node install-skill.js && echo 'Installation test completed. Check ~/.claude/skills/'",
-    "lint": "echo 'Add your linting commands here'"
+    "test:all": "pnpm -r test",
+    "publish:all": "pnpm -r publish --access public"
   },
-  "files": [
-    "SKILL.md",
-    "references/",
-    "src/",
-    "install-skill.js",
-    "uninstall-skill.js",
-    ".claude-skill.json",
-    "utils.js"
-  ],
-  "keywords": [
-    "claude-code",
-    "skill",
-    "ai-assistant",
-    "agent-skill",
-    "claude",
-    "weekly-report",
-    "git",
-    "commit-analyzer",
-    "automation"
-  ],
-  "author": "adonis",
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Adonis0123/weekly-flow.git"
+    "url": "https://github.com/Adonis0123/claude-skills.git"
   },
-  "bugs": {
-    "url": "https://github.com/Adonis0123/weekly-flow/issues"
-  },
-  "homepage": "https://github.com/Adonis0123/weekly-flow#readme",
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "author": "adonis",
+  "license": "MIT"
 }
