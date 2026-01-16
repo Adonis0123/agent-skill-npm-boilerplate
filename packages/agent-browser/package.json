@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/agent-browser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Claude Code Skill - 浏览器自动化，支持网页测试、表单填写、截图和数据提取",
   "scripts": {
     "postinstall": "node install-skill.js",
