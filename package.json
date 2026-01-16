@@ -14,7 +14,8 @@
     "tag:ci:major": "release-it --ci --increment=major",
     "release": "npx tsx scripts/publish.ts",
     "publish": "npx tsx scripts/publish.ts",
-    "publish:all": "pnpm -r publish --access public --no-git-checks"
+    "publish:all": "pnpm -r publish --access public --no-git-checks",
+    "publish:select": "npx tsx scripts/publish-select.ts"
   },
   "repository": {
     "type": "git",
