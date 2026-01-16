@@ -43,6 +43,26 @@ npm i -g @adonis0123/weekly-report
 # 安装后自动部署到 ~/.claude/skills/
 ```
 
+#### 一键安装所有包
+
+```bash
+# 复制下面的命令,一次性安装所有技能包
+npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator
+```
+
+或者分行安装（更清晰）：
+
+```bash
+npm i -g @adonis0123/skill-cli && \
+npm i -g @adonis0123/weekly-report && \
+npm i -g @adonis0123/agent-browser && \
+npm i -g @adonis0123/react-best-practices && \
+npm i -g @adonis0123/skill-development && \
+npm i -g @adonis0123/commit && \
+npm i -g @adonis0123/staged-changes-review && \
+npm i -g @adonis0123/code-doc-generator
+```
+
 ---
 
 ## 📦 包含的包

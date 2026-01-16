@@ -43,6 +43,26 @@ npm i -g @adonis0123/weekly-report
 # Automatically deployed to ~/.claude/skills/ after installation
 ```
 
+#### Install All Packages at Once
+
+```bash
+# Copy this command to install all skill packages at once
+npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator
+```
+
+Or install line by line (clearer):
+
+```bash
+npm i -g @adonis0123/skill-cli && \
+npm i -g @adonis0123/weekly-report && \
+npm i -g @adonis0123/agent-browser && \
+npm i -g @adonis0123/react-best-practices && \
+npm i -g @adonis0123/skill-development && \
+npm i -g @adonis0123/commit && \
+npm i -g @adonis0123/staged-changes-review && \
+npm i -g @adonis0123/code-doc-generator
+```
+
 ---
 
 ## 📦 Included Packages
