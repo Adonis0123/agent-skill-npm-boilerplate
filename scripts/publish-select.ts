@@ -177,19 +177,29 @@ async function main(): Promise<void> {
 
   // 6. Update version (set exact version, not bump)
   console.log('\n🔄 更新版本号...')
-  exec(`npm version ${nextVersion} --no-git-tag-version`, { cwd: selectedPkg.path })
-  console.log(`  ✓ ${selectedPkg.name} → ${nextVersion}`)
+  if (selectedPkg.currentVersion === nextVersion) {
+    console.log(`  ✓ 本地版本已是 ${nextVersion}，跳过版本更新`)
+  } else {
+    exec(`npm version ${nextVersion} --no-git-tag-version`, { cwd: selectedPkg.path })
+    console.log(`  ✓ ${selectedPkg.name} → ${nextVersion}`)
+  }
 
-  // 7. Git commit
-  console.log('\n📝 提交更改...')
-  const commitMessage = `chore: release ${selectedPkg.dirName}@${nextVersion}`
-  exec('git add -A')
-  exec(`git commit -m "${commitMessage}"`)
+  // 7. Git commit (only if there are changes)
+  let hasCommit = false
+  if (selectedPkg.currentVersion !== nextVersion) {
+    console.log('\n📝 提交更改...')
+    const commitMessage = `chore: release ${selectedPkg.dirName}@${nextVersion}`
+    exec('git add -A')
+    exec(`git commit -m "${commitMessage}"`)
+    hasCommit = true
 
-  // 8. Push
-  console.log('\n📤 推送到远程仓库...')
-  exec('git push')
-  console.log('  ✓ 已推送')
+    // 8. Push
+    console.log('\n📤 推送到远程仓库...')
+    exec('git push')
+    console.log('  ✓ 已推送')
+  } else {
+    console.log('\n📝 无版本变更，跳过 git 提交')
+  }
 
   // 9. Publish to npm
   console.log('\n🚀 发布到 npm...')
@@ -201,22 +211,20 @@ async function main(): Promise<void> {
   } catch (error) {
     console.error(`  ❌ ${selectedPkg.name} 发布失败`)
 
-    // 10. Rollback on failure
-    console.log('\n🔄 正在回滚更改...')
-    try {
-      // Revert the last commit
-      exec('git reset --hard HEAD~1')
-      console.log('  ✓ 已回滚 git commit')
-
-      // Force push to sync remote (since we already pushed)
-      exec('git push --force')
-      console.log('  ✓ 已同步远程仓库')
-
-      console.log('\n✅ 回滚完成，版本号已恢复')
-    } catch (rollbackError) {
-      console.error('\n⚠️  自动回滚失败，请手动执行:')
-      console.error('   git reset --hard HEAD~1')
-      console.error('   git push --force')
+    // 10. Rollback on failure (only if we made a commit)
+    if (hasCommit) {
+      console.log('\n🔄 正在回滚更改...')
+      try {
+        exec('git reset --hard HEAD~1')
+        console.log('  ✓ 已回滚 git commit')
+        exec('git push --force')
+        console.log('  ✓ 已同步远程仓库')
+        console.log('\n✅ 回滚完成，版本号已恢复')
+      } catch (rollbackError) {
+        console.error('\n⚠️  自动回滚失败，请手动执行:')
+        console.error('   git reset --hard HEAD~1')
+        console.error('   git push --force')
+      }
     }
 
     throw error
