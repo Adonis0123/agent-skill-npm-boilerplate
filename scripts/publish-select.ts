@@ -186,6 +186,7 @@ async function main(): Promise<void> {
 
   // 7. Git commit (only if there are changes)
   let hasCommit = false
+  let hasPushed = false
   if (selectedPkg.currentVersion !== nextVersion) {
     console.log('\n📝 提交更改...')
     const commitMessage = `chore: release ${selectedPkg.dirName}@${nextVersion}`
@@ -195,8 +196,21 @@ async function main(): Promise<void> {
 
     // 8. Push
     console.log('\n📤 推送到远程仓库...')
-    exec('git push')
-    console.log('  ✓ 已推送')
+    try {
+      exec('git push')
+      console.log('  ✓ 已推送')
+      hasPushed = true
+    } catch (error) {
+      console.error('  ❌ 推送失败')
+      console.log('\n🔄 正在回滚本地提交...')
+      try {
+        exec('git reset --hard HEAD~1')
+        console.log('  ✓ 已回滚本地 commit')
+      } catch {
+        console.error('  ⚠️  回滚失败，请手动执行: git reset --hard HEAD~1')
+      }
+      throw error
+    }
   } else {
     console.log('\n📝 无版本变更，跳过 git 提交')
   }
@@ -217,13 +231,17 @@ async function main(): Promise<void> {
       try {
         exec('git reset --hard HEAD~1')
         console.log('  ✓ 已回滚 git commit')
-        exec('git push --force')
-        console.log('  ✓ 已同步远程仓库')
+        if (hasPushed) {
+          exec('git push --force')
+          console.log('  ✓ 已同步远程仓库')
+        }
         console.log('\n✅ 回滚完成，版本号已恢复')
       } catch (rollbackError) {
         console.error('\n⚠️  自动回滚失败，请手动执行:')
         console.error('   git reset --hard HEAD~1')
-        console.error('   git push --force')
+        if (hasPushed) {
+          console.error('   git push --force')
+        }
       }
     }
 
