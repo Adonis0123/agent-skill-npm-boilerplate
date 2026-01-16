@@ -12,10 +12,9 @@
     "tag:ci": "release-it --ci",
     "tag:ci:minor": "release-it --ci --increment=minor",
     "tag:ci:major": "release-it --ci --increment=major",
-    "release": "npx tsx scripts/publish.ts",
+    "release": "npx tsx scripts/publish-select.ts",
     "publish": "npx tsx scripts/publish.ts",
-    "publish:all": "pnpm -r publish --access public --no-git-checks",
-    "publish:select": "npx tsx scripts/publish-select.ts"
+    "publish:all": "pnpm -r publish --access public --no-git-checks"
   },
   "repository": {
     "type": "git",
