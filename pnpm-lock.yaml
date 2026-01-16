@@ -54,6 +54,10 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
+  packages/commit: {}
+
+  packages/create-skill: {}
+
   packages/react-best-practices: {}
 
   packages/skill-development: {}

@@ -1,0 +1,33 @@
+{
+  "name": "@adonis0123/commit",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "keywords": [
+    "claude-code",
+    "skill",
+    "commit",
+    "git",
+    "conventional-commits",
+    "emoji"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/commit"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/commit"
+}

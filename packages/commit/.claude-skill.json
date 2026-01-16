@@ -1,0 +1,24 @@
+{
+  "name": "commit",
+  "version": "1.0.0",
+  "package": "@adonis0123/commit",
+  "files": {
+    "references": "references/"
+  },
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": {
+        "global": ".cursor/skills",
+        "project": ".cursor/skills"
+      }
+    }
+  }
+}

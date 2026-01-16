@@ -7,6 +7,7 @@
     "setup": "pnpm install && pnpm sync && node packages/create-skill/install-skill.js",
     "sync": "npx tsx scripts/sync-shared.ts",
     "build": "pnpm sync",
+    "install:select": "npx tsx scripts/install-select.ts",
     "test:all": "pnpm -r test",
     "tag": "release-it",
     "tag:ci": "release-it --ci",
