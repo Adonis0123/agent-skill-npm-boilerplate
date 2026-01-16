@@ -29,7 +29,7 @@ npm install -g @adonis0123/skill-development
 - 最佳实践和验证清单
 - **安装时自动从上游仓库拉取最新版本**
 
-## 核心��念
+## 核心概念
 
 ### 技能结构
 

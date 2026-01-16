@@ -106,17 +106,6 @@ function getNpmLatestVersion(packageName: string): string | null {
   }
 }
 
-/**
- * Compare two semver versions, returns true if a > b
- */
-function isVersionGreater(a: string, b: string): boolean {
-  const [aMajor, aMinor, aPatch] = a.split('.').map(Number)
-  const [bMajor, bMinor, bPatch] = b.split('.').map(Number)
-  if (aMajor !== bMajor) return aMajor > bMajor
-  if (aMinor !== bMinor) return aMinor > bMinor
-  return aPatch > bPatch
-}
-
 async function main(): Promise<void> {
   console.log('\n📦 选择单个包发布\n')
   console.log('='.repeat(50))
