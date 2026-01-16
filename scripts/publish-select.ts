@@ -81,6 +81,42 @@ function exec(cmd: string, options?: { cwd?: string }): void {
   execSync(cmd, { stdio: 'inherit', ...options })
 }
 
+/**
+ * Get the latest version from npm registry
+ */
+function getNpmLatestVersion(packageName: string): string | null {
+  try {
+    const result = execSync(`npm view ${packageName} versions --json`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    })
+    const versions = JSON.parse(result) as string[]
+    if (versions.length === 0) return null
+    // Sort versions and get the highest one
+    return versions.sort((a, b) => {
+      const [aMajor, aMinor, aPatch] = a.split('.').map(Number)
+      const [bMajor, bMinor, bPatch] = b.split('.').map(Number)
+      if (aMajor !== bMajor) return aMajor - bMajor
+      if (aMinor !== bMinor) return aMinor - bMinor
+      return aPatch - bPatch
+    }).pop()!
+  } catch {
+    // Package not found on npm
+    return null
+  }
+}
+
+/**
+ * Compare two semver versions, returns true if a > b
+ */
+function isVersionGreater(a: string, b: string): boolean {
+  const [aMajor, aMinor, aPatch] = a.split('.').map(Number)
+  const [bMajor, bMinor, bPatch] = b.split('.').map(Number)
+  if (aMajor !== bMajor) return aMajor > bMajor
+  if (aMinor !== bMinor) return aMinor > bMinor
+  return aPatch > bPatch
+}
+
 async function main(): Promise<void> {
   console.log('\n📦 选择单个包发布\n')
   console.log('='.repeat(50))
@@ -102,28 +138,43 @@ async function main(): Promise<void> {
     })),
   })
 
-  // 3. Select version bump
+  // 3. Check npm latest version
+  console.log(`\n🔍 检查 npm 上的版本...`)
+  const npmLatestVersion = getNpmLatestVersion(selectedPkg.name)
+  const baseVersion = npmLatestVersion || selectedPkg.currentVersion
+
+  if (npmLatestVersion) {
+    console.log(`   npm 最新版本: ${npmLatestVersion}`)
+    console.log(`   本地版本: ${selectedPkg.currentVersion}`)
+    if (npmLatestVersion !== selectedPkg.currentVersion) {
+      console.log(`   ⚠️  版本不一致，将基于 npm 版本 (${npmLatestVersion}) 计算新版本`)
+    }
+  } else {
+    console.log(`   这是一个新包，将基于本地版本 (${selectedPkg.currentVersion})`)
+  }
+
+  // 4. Select version bump (based on npm version if available)
   const bump = await select({
-    message: `选择版本类型 (当前: ${selectedPkg.currentVersion}):`,
+    message: `选择版本类型 (基于: ${baseVersion}):`,
     choices: [
       {
-        name: `patch → ${getNextVersion(selectedPkg.currentVersion, 'patch')}`,
+        name: `patch → ${getNextVersion(baseVersion, 'patch')}`,
         value: 'patch' as const,
       },
       {
-        name: `minor → ${getNextVersion(selectedPkg.currentVersion, 'minor')}`,
+        name: `minor → ${getNextVersion(baseVersion, 'minor')}`,
         value: 'minor' as const,
       },
       {
-        name: `major → ${getNextVersion(selectedPkg.currentVersion, 'major')}`,
+        name: `major → ${getNextVersion(baseVersion, 'major')}`,
         value: 'major' as const,
       },
     ],
   })
 
-  const nextVersion = getNextVersion(selectedPkg.currentVersion, bump)
+  const nextVersion = getNextVersion(baseVersion, bump)
 
-  // 4. Confirm
+  // 5. Confirm
   console.log('\n' + '='.repeat(50))
   console.log(`📋 将发布: ${selectedPkg.name}`)
   console.log(`   版本: ${selectedPkg.currentVersion} → ${nextVersion}`)
@@ -135,23 +186,23 @@ async function main(): Promise<void> {
     process.exit(0)
   }
 
-  // 5. Update version
+  // 6. Update version (set exact version, not bump)
   console.log('\n🔄 更新版本号...')
-  exec(`npm version ${bump} --no-git-tag-version`, { cwd: selectedPkg.path })
+  exec(`npm version ${nextVersion} --no-git-tag-version`, { cwd: selectedPkg.path })
   console.log(`  ✓ ${selectedPkg.name} → ${nextVersion}`)
 
-  // 6. Git commit
+  // 7. Git commit
   console.log('\n📝 提交更改...')
   const commitMessage = `chore: release ${selectedPkg.dirName}@${nextVersion}`
   exec('git add -A')
   exec(`git commit -m "${commitMessage}"`)
 
-  // 7. Push
+  // 8. Push
   console.log('\n📤 推送到远程仓库...')
   exec('git push')
   console.log('  ✓ 已推送')
 
-  // 8. Publish to npm
+  // 9. Publish to npm
   console.log('\n🚀 发布到 npm...')
   console.log('  提示: 如需免 OTP，请配置 ~/.npmrc 添加 Automation Token\n')
 
@@ -161,7 +212,7 @@ async function main(): Promise<void> {
   } catch (error) {
     console.error(`  ❌ ${selectedPkg.name} 发布失败`)
 
-    // 9. Rollback on failure
+    // 10. Rollback on failure
     console.log('\n🔄 正在回滚更改...')
     try {
       // Revert the last commit
@@ -182,7 +233,7 @@ async function main(): Promise<void> {
     throw error
   }
 
-  // 10. Done
+  // 11. Done
   console.log('\n' + '='.repeat(50))
   console.log(`✅ ${selectedPkg.name}@${nextVersion} 发布完成!`)
   console.log('='.repeat(50) + '\n')
