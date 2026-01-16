@@ -61,7 +61,7 @@ project-backend
 - [@adonis0123/commit](https://www.npmjs.com/package/@adonis0123/commit) - 提交信息生成
 - [@adonis0123/staged-changes-review](https://www.npmjs.com/package/@adonis0123/staged-changes-review) - 代码审查
 - [@adonis0123/create-skill](https://www.npmjs.com/package/@adonis0123/create-skill) - 创建新技能包
-
+- [@adonis0123/code-doc-generator](https://www.npmjs.com/package/@adonis0123/code-doc-generator) - 代码文档生成
 ## License
 
 MIT

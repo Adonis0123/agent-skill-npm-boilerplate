@@ -191,6 +191,22 @@ Clean up test files:
 rm -rf packages/{{SKILL_NAME}}/.claude packages/{{SKILL_NAME}}/.cursor
 ```
 
+### Step 8: Update "更多技能" Template
+
+**IMPORTANT:** Add the new skill to the template so other packages' README will include it.
+
+Edit `templates/more-skills.md` at project root:
+
+```markdown
+- [@adonis0123/{{SKILL_NAME}}](https://www.npmjs.com/package/@adonis0123/{{SKILL_NAME}}) - {{简短描述}}
+```
+
+Then sync to all packages:
+
+```bash
+pnpm sync:skills
+```
+
 ## Quick Reference
 
 | Step | Command |
@@ -199,6 +215,7 @@ rm -rf packages/{{SKILL_NAME}}/.claude packages/{{SKILL_NAME}}/.cursor
 | Sync scripts | `pnpm sync` |
 | Test package | `cd packages/SKILL_NAME && npm test` |
 | Test all | `pnpm test:all` |
+| Update "更多技能" | `pnpm sync:skills` |
 | Publish | `pnpm publish` |
 
 ## Local vs Remote Mode

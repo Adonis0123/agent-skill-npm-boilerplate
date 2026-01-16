@@ -59,18 +59,21 @@ function generateSection(skills: SkillLink[], excludePackage: string): string {
  */
 function replaceSection(readmeContent: string, newSection: string): string {
   // Pattern to match "## 更多技能" section until next "##" or "---" or end of file
-  const sectionRegex = /## 更多技能[\s\S]*?(?=\n## |\n---|\n*$)/;
+  // Use greedy match for trailing newlines to ensure consistent replacement
+  const sectionRegex = /## 更多技能[\s\S]*?(?=\n## |\n---|$)/;
 
   if (sectionRegex.test(readmeContent)) {
-    // Replace existing section
-    return readmeContent.replace(sectionRegex, newSection);
+    // Replace existing section and normalize trailing newlines
+    const replaced = readmeContent.replace(sectionRegex, newSection.trimEnd());
+    // Ensure file ends with single newline
+    return replaced.trimEnd() + '\n';
   } else {
     // Append before "## License" if exists, otherwise at the end
     const licenseRegex = /\n## License/;
     if (licenseRegex.test(readmeContent)) {
-      return readmeContent.replace(licenseRegex, `\n${newSection}\n\n## License`);
+      return readmeContent.replace(licenseRegex, `\n${newSection.trimEnd()}\n\n## License`);
     }
-    return readmeContent.trimEnd() + '\n\n' + newSection + '\n';
+    return readmeContent.trimEnd() + '\n\n' + newSection.trimEnd() + '\n';
   }
 }
 

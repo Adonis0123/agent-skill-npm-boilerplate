@@ -1,0 +1,36 @@
+{
+  "name": "@adonis0123/code-doc-generator",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json",
+    "utils.js"
+  ],
+  "keywords": [
+    "claude-code",
+    "skill",
+    "code-doc-generator",
+    "documentation",
+    "readme",
+    "mermaid",
+    "architecture-diagram",
+    "automation"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/code-doc-generator"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/code-doc-generator"
+}
