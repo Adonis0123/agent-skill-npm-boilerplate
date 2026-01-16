@@ -286,6 +286,38 @@ async function main(): Promise<void> {
       console.log(`  ✓ ${pkg.name} 发布成功\n`)
     } catch (error) {
       console.error(`  ❌ ${pkg.name} 发布失败`)
+
+      // Rollback on failure
+      console.log('\n🔄 正在回滚更改...')
+      try {
+        // Revert the last commit
+        exec('git reset --hard HEAD~1')
+        console.log('  ✓ 已回滚 git commit')
+
+        // Delete tag if created
+        if (tagVersion) {
+          try {
+            exec(`git tag -d v${tagVersion}`)
+            console.log(`  ✓ 已删除本地 tag v${tagVersion}`)
+          } catch {
+            // Tag might not exist
+          }
+        }
+
+        // Force push to sync remote
+        exec('git push --force')
+        console.log('  ✓ 已同步远程仓库')
+
+        console.log('\n✅ 回滚完成，版本号已恢复')
+      } catch (rollbackError) {
+        console.error('\n⚠️  自动回滚失败，请手动执行:')
+        console.error('   git reset --hard HEAD~1')
+        console.error('   git push --force')
+        if (tagVersion) {
+          console.error(`   git tag -d v${tagVersion}`)
+        }
+      }
+
       throw error
     }
   }
