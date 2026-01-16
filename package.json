@@ -1,6 +1,6 @@
 {
   "name": "claude-skills",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "description": "Claude Code Skills Collection - 一系列 Claude Code 技能的 npm 包",
   "scripts": {

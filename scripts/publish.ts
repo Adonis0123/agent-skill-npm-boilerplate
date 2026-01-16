@@ -11,7 +11,7 @@
  * Usage: pnpm publish
  */
 
-import { select, confirm, input } from '@inquirer/prompts'
+import { select, confirm } from '@inquirer/prompts'
 import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -87,13 +87,6 @@ function getNextVersion(currentVersion: string, bump: 'patch' | 'minor' | 'major
  */
 function exec(cmd: string, options?: { cwd?: string }): void {
   execSync(cmd, { stdio: 'inherit', ...options })
-}
-
-/**
- * Execute command and return output
- */
-function execQuiet(cmd: string, options?: { cwd?: string }): string {
-  return execSync(cmd, { encoding: 'utf-8', ...options }).trim()
 }
 
 /**
@@ -279,17 +272,18 @@ async function main(): Promise<void> {
   }
   console.log('  ✓ 已推送')
 
-  // 10. Publish to npm with OTP
+  // 10. Publish to npm
   console.log('\n🚀 发布到 npm...')
-  const otp = await input({ message: '请输入 npm OTP:' })
+  console.log('  提示: 如需免 OTP，请配置 ~/.npmrc 添加 Automation Token\n')
 
   for (const pkg of packagesToPublish) {
     const nextVersion =
       pkg.bump === 'unified' ? tagVersion! : getNextVersion(pkg.currentVersion, pkg.bump)
-    console.log(`\n  发布 ${pkg.name}@${nextVersion}...`)
+    console.log(`  发布 ${pkg.name}@${nextVersion}...`)
+
     try {
-      exec(`npm publish --access public --otp=${otp}`, { cwd: pkg.path })
-      console.log(`  ✓ ${pkg.name} 发布成功`)
+      exec(`npm publish --access public`, { cwd: pkg.path })
+      console.log(`  ✓ ${pkg.name} 发布成功\n`)
     } catch (error) {
       console.error(`  ❌ ${pkg.name} 发布失败`)
       throw error
