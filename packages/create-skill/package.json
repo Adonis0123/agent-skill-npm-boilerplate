@@ -1,0 +1,28 @@
+{
+  "name": "@adonis0123/create-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claude Code Skill - 项目专属技能创建工具，用于快速创建新的 skill 包",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "references/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "keywords": [
+    "claude-code",
+    "skill",
+    "create",
+    "generator",
+    "template"
+  ],
+  "author": "adonis",
+  "license": "MIT"
+}

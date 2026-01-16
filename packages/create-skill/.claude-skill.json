@@ -1,0 +1,45 @@
+{
+  "name": "create-skill",
+  "version": "1.0.0",
+  "package": "@adonis0123/create-skill",
+  "files": {
+    "references": "references/"
+  },
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": {
+        "global": ".cursor/skills",
+        "project": ".cursor/skills"
+      }
+    },
+    "windsurf": {
+      "enabled": false,
+      "paths": {
+        "global": ".windsurf/skills",
+        "project": ".windsurf/skills"
+      }
+    },
+    "aider": {
+      "enabled": false,
+      "paths": {
+        "global": ".aider/skills",
+        "project": ".aider/skills"
+      }
+    },
+    "custom": {
+      "enabled": false,
+      "paths": {
+        "global": ".ai-skills",
+        "project": ".ai-skills"
+      }
+    }
+  }
+}

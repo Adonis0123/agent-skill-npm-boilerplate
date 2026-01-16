@@ -4,6 +4,7 @@
   "private": true,
   "description": "Claude Code Skills Collection - 一系列 Claude Code 技能的 npm 包",
   "scripts": {
+    "setup": "pnpm install && pnpm sync && node packages/create-skill/install-skill.js",
     "sync": "npx tsx scripts/sync-shared.ts",
     "build": "pnpm sync",
     "test:all": "pnpm -r test",

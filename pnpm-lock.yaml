@@ -56,6 +56,8 @@ importers:
 
   packages/react-best-practices: {}
 
+  packages/skill-development: {}
+
   packages/weekly-report: {}
 
 packages:
