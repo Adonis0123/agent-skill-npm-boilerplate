@@ -50,6 +50,9 @@ npm i -g @adonis0123/weekly-report
 | [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化（测试、截图、数据提取） | `npm i -g @adonis0123/agent-browser` |
 | [@adonis0123/react-best-practices](./packages/react-best-practices) | React/Next.js 性能优化最佳实践 | `npm i -g @adonis0123/react-best-practices` |
 | [@adonis0123/skill-development](./packages/skill-development) | Claude Code 官方技能开发指南 | `npm i -g @adonis0123/skill-development` |
+| [@adonis0123/commit](./packages/commit) | 自动生成 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
+| [@adonis0123/staged-changes-review](./packages/staged-changes-review) | 暂存变更审查（风险评估、错误检测） | `npm i -g @adonis0123/staged-changes-review` |
+| [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动生成包含 Mermaid 流程图的 README 文档 | `npm i -g @adonis0123/code-doc-generator` |
 
 > **注意**：`@adonis0123/create-skill` 是私有包，不会发布到 npm，仅供本项目内部使用。
 
@@ -195,6 +198,48 @@ npm i -g @adonis0123/skill-development
 ```
 
 在 Claude Code 中使用：`/skill-development`
+
+### commit
+
+自动生成符合 Conventional Commits 规范的 Git 提交信息。
+
+- 分析暂存的代码变更
+- 自动选择合适的 type 和 emoji 前缀
+- 支持中英文提交信息
+
+```bash
+npm i -g @adonis0123/commit
+```
+
+在 Claude Code 中使用：`/commit`
+
+### staged-changes-review
+
+暂存变更的全面审查工具。
+
+- 风险评估和错误检测
+- 影响分析
+- 提交前验证建议
+
+```bash
+npm i -g @adonis0123/staged-changes-review
+```
+
+在 Claude Code 中使用：`/staged-changes-review`
+
+### code-doc-generator
+
+自动分析代码仓库并生成 README 文档。
+
+- 架构图和流程图（Mermaid）
+- 功能说明和代码流程可视化
+- 支持多种编程语言
+
+```bash
+npm i -g @adonis0123/code-doc-generator
+```
+
+在 Claude Code 中使用：`/code-doc-generator`
 
 ### create-skill（私有）
 
