@@ -96,7 +96,38 @@ Create the npm package configuration:
 }
 ```
 
-### Step 4: Create SKILL.md
+### Step 4: Create README.md
+
+Create the package README file for npm and GitHub display:
+
+```markdown
+# @adonis0123/{{SKILL_NAME}}
+
+Claude Code 技能 - {{SKILL_DESCRIPTION}}
+
+## 功能特性
+
+- {{Feature 1}}
+- {{Feature 2}}
+
+## 安装
+
+\`\`\`bash
+npm install -g @adonis0123/{{SKILL_NAME}}
+\`\`\`
+
+## 使用方法
+
+在 Claude Code 中使用 `/{{SKILL_NAME}}` 或相关触发词。
+
+## License
+
+MIT
+```
+
+Consult `references/templates.md` for the complete README template.
+
+### Step 5: Create SKILL.md
 
 Write the skill definition file following these requirements:
 
@@ -128,7 +159,7 @@ version: 0.1.0
 3. Quick reference table
 4. Pointers to reference files
 
-### Step 5: Sync and Build
+### Step 6: Sync and Build
 
 Run the sync script to generate install/uninstall scripts:
 
@@ -140,7 +171,7 @@ This compiles `shared/src/*.ts` and generates:
 - `packages/{{SKILL_NAME}}/install-skill.js`
 - `packages/{{SKILL_NAME}}/uninstall-skill.js`
 
-### Step 6: Test and Verify
+### Step 7: Test and Verify
 
 Test the package installation:
 

@@ -260,6 +260,61 @@ For detailed information, consult:
 
 ---
 
+## README.md Template
+
+```markdown
+# @adonis0123/{{SKILL_NAME}}
+
+Claude Code 技能 - {{SKILL_DESCRIPTION}}
+
+## 功能特性
+
+- {{Feature 1}}
+- {{Feature 2}}
+- {{Feature 3}}
+
+## 安装
+
+\`\`\`bash
+npm install -g @adonis0123/{{SKILL_NAME}}
+\`\`\`
+
+安装后自动部署到 `~/.claude/skills/{{SKILL_NAME}}/`。
+
+## 使用方法
+
+在 Claude Code 中：
+
+\`\`\`
+/{{SKILL_NAME}}
+\`\`\`
+
+或直接说：
+- "{{trigger phrase 1}}"
+- "{{trigger phrase 2}}"
+
+## 示例
+
+{{Example usage or output}}
+
+## License
+
+MIT
+```
+
+**Required Sections:**
+- Package name and description
+- Installation command
+- Basic usage
+
+**Optional Sections:**
+- Features list
+- Examples
+- Configuration options
+- Troubleshooting
+
+---
+
 ## Directory Structure Examples
 
 ### Minimal Skill Package
