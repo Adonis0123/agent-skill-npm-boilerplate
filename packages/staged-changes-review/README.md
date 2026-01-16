@@ -1,6 +1,6 @@
 # @adonis0123/staged-changes-review
 
-> Claude Code 技能 - Git 暂存变更的全面审查（风险评估、错误检测、影响分析）
+> Git 暂存变更的全面审查（风险评估、错误检测、影响分析）
 
 [![npm version](https://img.shields.io/npm/v/@adonis0123/staged-changes-review.svg)](https://www.npmjs.com/package/@adonis0123/staged-changes-review)
 
