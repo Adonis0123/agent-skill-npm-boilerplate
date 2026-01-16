@@ -28,7 +28,7 @@ interface Package {
 }
 
 interface PackageToPublish extends Package {
-  bump: 'patch' | 'minor' | 'major'
+  bump: 'patch' | 'minor' | 'major' | 'unified'
 }
 
 /**
@@ -96,11 +96,56 @@ function execQuiet(cmd: string, options?: { cwd?: string }): string {
   return execSync(cmd, { encoding: 'utf-8', ...options }).trim()
 }
 
+/**
+ * Get root package.json version
+ */
+function getRootVersion(): string {
+  const pkgJsonPath = path.join(ROOT_DIR, 'package.json')
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'))
+  return pkgJson.version
+}
+
+/**
+ * Update root package.json version
+ */
+function updateRootVersion(version: string): void {
+  const pkgJsonPath = path.join(ROOT_DIR, 'package.json')
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'))
+  pkgJson.version = version
+  fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + '\n')
+}
+
 async function main(): Promise<void> {
   console.log('\n📦 交互式发布工具\n')
   console.log('='.repeat(50))
 
-  // 1. Get all packages
+  // 1. Ask if user wants to create a git tag
+  const createTag = await confirm({ message: '是否创建 Git Tag?' })
+
+  let tagVersion: string | null = null
+  if (createTag) {
+    const currentRootVersion = getRootVersion()
+    const tagBump = await select({
+      message: `选择版本类型 (当前: ${currentRootVersion}):`,
+      choices: [
+        {
+          name: `patch → ${getNextVersion(currentRootVersion, 'patch')}`,
+          value: 'patch',
+        },
+        {
+          name: `minor → ${getNextVersion(currentRootVersion, 'minor')}`,
+          value: 'minor',
+        },
+        {
+          name: `major → ${getNextVersion(currentRootVersion, 'major')}`,
+          value: 'major',
+        },
+      ],
+    })
+    tagVersion = getNextVersion(currentRootVersion, tagBump as 'patch' | 'minor' | 'major')
+  }
+
+  // 2. Get all packages
   const packages = getPackages()
 
   if (packages.length === 0) {
@@ -108,7 +153,7 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  // 2. Let user select version for each package
+  // 3. Let user select version for each package
   const packagesToPublish: PackageToPublish[] = []
 
   for (const pkg of packages) {
@@ -130,10 +175,24 @@ async function main(): Promise<void> {
           name: `major → ${getNextVersion(pkg.currentVersion, 'major')}`,
           value: 'major',
         },
+        ...(tagVersion
+          ? [
+              {
+                name: `统一版本 → ${tagVersion}`,
+                value: 'unified',
+              },
+            ]
+          : []),
       ],
     })
 
-    if (action !== 'skip') {
+    if (action === 'unified' && tagVersion) {
+      // Set version to match tag version
+      packagesToPublish.push({
+        ...pkg,
+        bump: 'unified' as any,
+      })
+    } else if (action !== 'skip') {
       packagesToPublish.push({
         ...pkg,
         bump: action as 'patch' | 'minor' | 'major',
@@ -141,18 +200,22 @@ async function main(): Promise<void> {
     }
   }
 
-  // 3. Check if any packages selected
+  // 4. Check if any packages selected
   if (packagesToPublish.length === 0) {
     console.log('\n没有选择任何包发布，退出。')
     process.exit(0)
   }
 
-  // 4. Show summary and confirm
+  // 5. Show summary and confirm
   console.log('\n' + '='.repeat(50))
+  if (tagVersion) {
+    console.log(`🏷️  Git Tag: v${tagVersion}\n`)
+  }
   console.log('📋 将发布以下包:\n')
   packagesToPublish.forEach((pkg) => {
-    const nextVersion = getNextVersion(pkg.currentVersion, pkg.bump)
-    console.log(`  • ${pkg.name}: ${pkg.currentVersion} → ${nextVersion} (${pkg.bump})`)
+    const nextVersion =
+      pkg.bump === 'unified' ? tagVersion! : getNextVersion(pkg.currentVersion, pkg.bump)
+    console.log(`  • ${pkg.name}: ${pkg.currentVersion} → ${nextVersion}`)
   })
   console.log()
 
@@ -162,31 +225,67 @@ async function main(): Promise<void> {
     process.exit(0)
   }
 
-  // 5. Update versions
+  // 6. Update versions
   console.log('\n🔄 更新版本号...')
-  for (const pkg of packagesToPublish) {
-    exec(`npm version ${pkg.bump} --no-git-tag-version`, { cwd: pkg.path })
-    const nextVersion = getNextVersion(pkg.currentVersion, pkg.bump)
-    console.log(`  ✓ ${pkg.name} → ${nextVersion}`)
+
+  // Update root version if creating tag
+  if (tagVersion) {
+    updateRootVersion(tagVersion)
+    console.log(`  ✓ 根目录 → ${tagVersion}`)
   }
 
-  // 6. Git commit and push
+  // Update package versions
+  for (const pkg of packagesToPublish) {
+    if (pkg.bump === 'unified' && tagVersion) {
+      // Set exact version
+      exec(`npm version ${tagVersion} --no-git-tag-version`, { cwd: pkg.path })
+      console.log(`  ✓ ${pkg.name} → ${tagVersion}`)
+    } else if (pkg.bump !== 'unified') {
+      exec(`npm version ${pkg.bump} --no-git-tag-version`, { cwd: pkg.path })
+      const nextVersion = getNextVersion(pkg.currentVersion, pkg.bump)
+      console.log(`  ✓ ${pkg.name} → ${nextVersion}`)
+    }
+  }
+
+  // 7. Git commit
   console.log('\n📝 提交更改...')
-  const commitMessage = packagesToPublish
-    .map((pkg) => `${pkg.name.replace('@adonis0123/', '')}@${getNextVersion(pkg.currentVersion, pkg.bump)}`)
-    .join(', ')
+  const commitMessage = tagVersion
+    ? `chore: release v${tagVersion}`
+    : `chore: release ${packagesToPublish
+        .map((pkg) => {
+          const version =
+            pkg.bump === 'unified'
+              ? tagVersion!
+              : getNextVersion(pkg.currentVersion, pkg.bump)
+          return `${pkg.name.replace('@adonis0123/', '')}@${version}`
+        })
+        .join(', ')}`
 
   exec('git add -A')
-  exec(`git commit -m "chore: release ${commitMessage}"`)
-  exec('git push')
-  console.log('  ✓ 已推送到远程仓库')
+  exec(`git commit -m "${commitMessage}"`)
 
-  // 7. Publish to npm with OTP
+  // 8. Create tag if requested
+  if (tagVersion) {
+    console.log(`\n🏷️  创建 Tag v${tagVersion}...`)
+    exec(`git tag v${tagVersion}`)
+  }
+
+  // 9. Push
+  console.log('\n📤 推送到远程仓库...')
+  if (tagVersion) {
+    exec('git push --follow-tags')
+  } else {
+    exec('git push')
+  }
+  console.log('  ✓ 已推送')
+
+  // 10. Publish to npm with OTP
   console.log('\n🚀 发布到 npm...')
   const otp = await input({ message: '请输入 npm OTP:' })
 
   for (const pkg of packagesToPublish) {
-    const nextVersion = getNextVersion(pkg.currentVersion, pkg.bump)
+    const nextVersion =
+      pkg.bump === 'unified' ? tagVersion! : getNextVersion(pkg.currentVersion, pkg.bump)
     console.log(`\n  发布 ${pkg.name}@${nextVersion}...`)
     try {
       exec(`npm publish --access public --otp=${otp}`, { cwd: pkg.path })
@@ -197,9 +296,12 @@ async function main(): Promise<void> {
     }
   }
 
-  // 8. Done
+  // 11. Done
   console.log('\n' + '='.repeat(50))
   console.log('✅ 发布完成!')
+  if (tagVersion) {
+    console.log(`   Tag: v${tagVersion}`)
+  }
   console.log('='.repeat(50) + '\n')
 }
 

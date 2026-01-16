@@ -13,8 +13,7 @@ export default {
   hooks: {
     // Bump all package versions before committing
     'before:bump': 'pnpm -r exec npm version ${version} --no-git-tag-version',
-    // Publish all packages after git operations
-    'after:git:release': 'pnpm publish:all',
+    // Note: publish is handled separately via `pnpm publish` (interactive, supports OTP)
   },
   plugins: {
     'release-it-pnpm': {
