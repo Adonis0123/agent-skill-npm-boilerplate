@@ -1,5 +1,5 @@
 ---
-name: Create Skill Package
+name: create-skill
 description: This skill should be used when the user asks to "create a new skill", "add a new skill package", "新建 skill 包", "创建新技能", "添加新的技能包", or wants to add a new npm skill package to this claude-skills monorepo project.
 version: 1.0.0
 ---
@@ -103,11 +103,18 @@ Write the skill definition file following these requirements:
 **Frontmatter (Required):**
 ```yaml
 ---
-name: Skill Name
+name: skill-name
 description: This skill should be used when the user asks to "trigger 1", "trigger 2"...
 version: 0.1.0
 ---
 ```
+
+**Name Field Rules:**
+- **MUST use kebab-case format**: lowercase letters with hyphens (e.g., `my-skill-name`)
+- **NO spaces, underscores, or capital letters**
+- Examples:
+  - ✅ `weekly-report`, `agent-browser`, `react-best-practices`
+  - ❌ `Weekly Report`, `weekly_report`, `WeeklyReport`
 
 **Writing Style:**
 - Use imperative form: "Create the file" (not "You should create")
