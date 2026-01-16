@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/react-best-practices",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Claude Code Skill - React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering。安装时自动从上游仓库拉取最新版本。",
   "scripts": {
     "postinstall": "node install-skill.js",
