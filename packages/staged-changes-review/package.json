@@ -1,0 +1,36 @@
+{
+  "name": "@adonis0123/staged-changes-review",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "keywords": [
+    "claude-code",
+    "skill",
+    "git",
+    "code-review",
+    "staged-changes",
+    "risk-assessment"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/staged-changes-review"
+  },
+  "bugs": {
+    "url": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/issues"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/staged-changes-review#readme"
+}
