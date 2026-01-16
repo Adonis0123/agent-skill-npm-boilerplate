@@ -33,6 +33,9 @@ skill install Adonis0123/agent-skill-npm-boilerplate/packages/weekly-report
 
 # Browser Automation
 skill install Adonis0123/agent-skill-npm-boilerplate/packages/agent-browser
+
+# Skill Development Guide (from Anthropic)
+skill install anthropics/claude-code/plugins/plugin-dev/skills/skill-development
 ```
 
 ### Install from Other Sources

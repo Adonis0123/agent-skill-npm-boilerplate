@@ -4,6 +4,16 @@
 
 ## 🚀 快速开始
 
+### 克隆项目后初始化
+
+```bash
+git clone https://github.com/Adonis0123/agent-skill-npm-boilerplate.git
+cd agent-skill-npm-boilerplate
+pnpm setup
+```
+
+`pnpm setup` 会自动安装依赖、同步脚本，并安装 `create-skill` 技能到项目。
+
 ### 方式一：使用 CLI 工具（推荐）
 
 ```bash
@@ -39,6 +49,9 @@ npm i -g @adonis0123/weekly-report
 | [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报 | `npm i -g @adonis0123/weekly-report` |
 | [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化（测试、截图、数据提取） | `npm i -g @adonis0123/agent-browser` |
 | [@adonis0123/react-best-practices](./packages/react-best-practices) | React/Next.js 性能优化最佳实践 | `npm i -g @adonis0123/react-best-practices` |
+| [@adonis0123/skill-development](./packages/skill-development) | Claude Code 官方技能开发指南 | `npm i -g @adonis0123/skill-development` |
+
+> **注意**：`@adonis0123/create-skill` 是私有包，不会发布到 npm，仅供本项目内部使用。
 
 ---
 
@@ -168,6 +181,33 @@ npm i -g @adonis0123/react-best-practices
 
 在 Claude Code 中使用：`/react-best-practices`
 
+### skill-development
+
+来自 Anthropic 官方的 Claude Code 技能开发指南。
+
+- 技能结构和设计原则（Progressive Disclosure）
+- 创建技能的完整流程（6 步骤）
+- 最佳实践和验证清单
+- **安装时自动从上游仓库拉取最新版本**
+
+```bash
+npm i -g @adonis0123/skill-development
+```
+
+在 Claude Code 中使用：`/skill-development`
+
+### create-skill（私有）
+
+项目专属的技能创建工具，用于快速创建新的 skill 包。
+
+- 6 步创建流程指南
+- 完整的配置文件模板
+- 详细的验证检查清单
+
+> 此包不发布到 npm，克隆项目后运行 `pnpm setup` 自动安装。
+
+在 Claude Code 中使用：`/create-skill`
+
 ---
 
 ## 🔧 开发者指南
@@ -196,7 +236,9 @@ agent-skill-npm-boilerplate/
     │   └── package.json
     ├── weekly-report/        # 周报技能
     ├── agent-browser/        # 浏览器自动化技能
-    └── react-best-practices/ # React 最佳实践技能
+    ├── react-best-practices/ # React 最佳实践技能
+    ├── skill-development/    # 技能开发指南（远程同步）
+    └── create-skill/         # 技能创建工具（私有）
 ```
 
 ### 共享代码架构
@@ -216,6 +258,9 @@ shared/src/*.ts  →  esbuild 打包  →  packages/*/install-skill.js
 ### 常用命令
 
 ```bash
+# 克隆后初始化（安装依赖 + 同步脚本 + 安装 create-skill）
+pnpm setup
+
 # 安装依赖
 pnpm install
 
@@ -238,6 +283,15 @@ pnpm release:react-best-practices
 ```
 
 ### 添加新技能
+
+推荐使用 `create-skill` 技能来创建新的 skill 包：
+
+```bash
+# 确保已运行 pnpm setup
+# 在 Claude Code 中说 "创建一个新的 skill 包" 或 "/create-skill"
+```
+
+或手动创建：
 
 1. 创建 `packages/new-skill/` 目录
 2. 创建必要文件：
