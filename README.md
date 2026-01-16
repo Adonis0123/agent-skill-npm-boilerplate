@@ -1,3 +1,7 @@
+简体中文 | [English](./README.en.md)
+
+---
+
 # Agent Skills
 
 > AI Agent 技能管理工具集 - 包含 CLI 工具和多个可安装的技能包

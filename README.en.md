@@ -1,3 +1,7 @@
+[简体中文](./README.md) | English
+
+---
+
 # Agent Skills
 
 > AI Agent Skill Management Toolkit - Includes CLI tool and multiple installable skill packages
