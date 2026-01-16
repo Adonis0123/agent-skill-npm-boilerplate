@@ -124,6 +124,36 @@ rm -rf packages/{{SKILL_NAME}}/.claude packages/{{SKILL_NAME}}/.cursor
 
 ---
 
+## Phase 6.5: Update "更多技能" Template
+
+### Add New Skill to Template
+
+Edit `templates/more-skills.md` at project root:
+
+```markdown
+## 更多技能
+
+- [@adonis0123/weekly-report](...) - 周报生成
+- [@adonis0123/agent-browser](...) - 浏览器自动化
+... existing skills ...
+- [@adonis0123/{{SKILL_NAME}}](https://www.npmjs.com/package/@adonis0123/{{SKILL_NAME}}) - {{SKILL_DESCRIPTION}}  <!-- ADD THIS LINE -->
+```
+
+### Sync to All Packages
+
+```bash
+pnpm sync:skills
+```
+
+### Verification
+
+- [ ] New skill added to `templates/more-skills.md`
+- [ ] `pnpm sync:skills` completed without errors
+- [ ] All other packages' README.md updated with new skill link
+- [ ] New package's README.md excludes its own link
+
+---
+
 ## Phase 7: Pre-Publish Checklist
 
 ### Content Review
@@ -168,6 +198,7 @@ cd packages/{{SKILL_NAME}} && npm publish --access public
 |------|---------|
 | Create directory | `mkdir -p packages/SKILL_NAME/{references,src}` |
 | Sync scripts | `pnpm sync` |
+| Sync "更多技能" | `pnpm sync:skills` |
 | Test single package | `cd packages/SKILL_NAME && npm test` |
 | Test all packages | `pnpm test:all` |
 | Interactive publish | `pnpm publish` |

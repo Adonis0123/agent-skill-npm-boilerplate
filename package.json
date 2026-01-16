@@ -5,7 +5,8 @@
   "description": "Claude Code Skills Collection - 一系列 Claude Code 技能的 npm 包",
   "scripts": {
     "setup": "pnpm install && pnpm sync && node packages/create-skill/install-skill.js",
-    "sync": "npx tsx scripts/sync-shared.ts",
+    "sync": "npx tsx scripts/sync-shared.ts && npx tsx scripts/sync-more-skills.ts",
+    "sync:skills": "npx tsx scripts/sync-more-skills.ts",
     "build": "pnpm sync",
     "install:select": "npx tsx scripts/install-select.ts",
     "test:all": "pnpm -r test",

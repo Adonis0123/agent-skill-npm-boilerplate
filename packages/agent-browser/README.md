@@ -71,6 +71,7 @@ agent-browser wait --load networkidle
 - [@adonis0123/skill-development](https://www.npmjs.com/package/@adonis0123/skill-development) - 技能开发指南
 - [@adonis0123/commit](https://www.npmjs.com/package/@adonis0123/commit) - 提交信息生成
 - [@adonis0123/staged-changes-review](https://www.npmjs.com/package/@adonis0123/staged-changes-review) - 代码审查
+- [@adonis0123/create-skill](https://www.npmjs.com/package/@adonis0123/create-skill) - 创建新技能包
 
 ## License
 
