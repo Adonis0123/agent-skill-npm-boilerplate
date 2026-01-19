@@ -10,6 +10,22 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
+# 提交类型配置
+COMMIT_TYPE_CONFIG = {
+    "feat": {"label": "[新功能]", "priority": 1, "is_highlight": True, "is_challenge": False},
+    "fix": {"label": "[修复]", "priority": 2, "is_highlight": False, "is_challenge": True},
+    "refactor": {"label": "[优化]", "priority": 3, "is_highlight": False, "is_challenge": False},
+    "perf": {"label": "[性能]", "priority": 3, "is_highlight": True, "is_challenge": False},
+    "style": {"label": "[样式]", "priority": 6, "is_highlight": False, "is_challenge": False},
+    "docs": {"label": "[文档]", "priority": 5, "is_highlight": False, "is_challenge": False},
+    "test": {"label": "[测试]", "priority": 4, "is_highlight": False, "is_challenge": False},
+    "chore": {"label": "[杂项]", "priority": 6, "is_highlight": False, "is_challenge": False},
+    "build": {"label": "[构建]", "priority": 4, "is_highlight": False, "is_challenge": False},
+    "ci": {"label": "[CI]", "priority": 5, "is_highlight": False, "is_challenge": False},
+    "other": {"label": "", "priority": 7, "is_highlight": False, "is_challenge": False},
+}
+
+
 # 琐碎提交的关键词
 TRIVIAL_PATTERNS = [
     r"^fix\s*typo",
@@ -155,6 +171,10 @@ def get_commits(
                     "date": parts[3],
                     "type": parsed["type"],
                     "is_trivial": parsed["is_trivial"],
+                    "is_highlight": parsed["is_highlight"],
+                    "is_challenge": parsed["is_challenge"],
+                    "label": parsed["label"],
+                    "priority": parsed["priority"],
                     "project": get_repo_name(repo_path),
                 })
 
@@ -192,13 +212,25 @@ def parse_commit_message(message: str) -> Dict[str, Any]:
         message: 提交信息
 
     Returns:
-        解析后的提交信息字典
+        解析后的提交信息字典，包含：
+        - type: 提交类型
+        - scope: 作用域
+        - description: 描述
+        - is_trivial: 是否为琐碎提交
+        - is_highlight: 是否为重点（feat/perf 类型）
+        - is_challenge: 是否为难点（fix 类型）
+        - label: 类型标签（如 [新功能]）
+        - priority: 优先级（用于排序）
     """
     result = {
         "type": "other",
         "scope": None,
         "description": message,
         "is_trivial": False,
+        "is_highlight": False,
+        "is_challenge": False,
+        "label": "",
+        "priority": 7,
     }
 
     # 检查是否为琐碎提交
@@ -213,11 +245,20 @@ def parse_commit_message(message: str) -> Dict[str, Any]:
     match = re.match(conventional_pattern, message)
 
     if match:
-        result["type"] = match.group(1).lower()
+        commit_type = match.group(1).lower()
+        result["type"] = commit_type
         result["scope"] = match.group(2)
         result["description"] = match.group(3)
     else:
         result["description"] = message
+        commit_type = "other"
+
+    # 从配置中获取类型属性
+    type_config = COMMIT_TYPE_CONFIG.get(commit_type, COMMIT_TYPE_CONFIG["other"])
+    result["is_highlight"] = type_config["is_highlight"]
+    result["is_challenge"] = type_config["is_challenge"]
+    result["label"] = type_config["label"]
+    result["priority"] = type_config["priority"]
 
     return result
 

@@ -6,7 +6,7 @@
 import re
 from typing import Any, Dict, List, Optional
 
-from src.git_analyzer import group_commits_by_project
+from src.git_analyzer import group_commits_by_project, COMMIT_TYPE_CONFIG
 
 
 def generate_report(
@@ -75,8 +75,9 @@ def merge_related_commits(
     """合并相关提交
 
     合并规则：
-    - 同一功能的多次迭代合并为一条
-    - 问题排查和解决归为一条
+    1. 先按 commit 类型分组（feat/fix/docs 分开）
+    2. 再按关键词合并相似提交
+    3. 按类型优先级排序输出
 
     Args:
         commits: 提交记录列表
@@ -89,48 +90,61 @@ def merge_related_commits(
     if len(commits) <= 1:
         single = commits[0].copy()
         single.setdefault("details", [])
+        single.setdefault("commit_count", 1)
         return [single]
 
-    # 按关键词分组
-    groups: Dict[str, List[Dict[str, Any]]] = {}
-
+    # 第一步：按类型分组
+    type_groups: Dict[str, List[Dict[str, Any]]] = {}
     for commit in commits:
-        # 提取关键词
-        keywords = extract_keywords(commit["message"])
-        key = frozenset(keywords) if keywords else commit["message"]
+        commit_type = commit.get("type", "other")
+        if commit_type not in type_groups:
+            type_groups[commit_type] = []
+        type_groups[commit_type].append(commit)
 
-        # 转换为字符串 key
-        str_key = str(sorted(keywords)) if keywords else commit["message"]
-
-        if str_key not in groups:
-            groups[str_key] = []
-        groups[str_key].append(commit)
-
-    # 合并同组提交（保留主条目 + 子条目细节，避免信息丢失）
+    # 第二步：在每个类型组内按关键词合并
     merged: List[Dict[str, Any]] = []
-    for group_commits in groups.values():
-        main_commit = group_commits[0].copy()
-        for c in group_commits:
-            if c.get("type") == "feat":
-                main_commit = c.copy()
-                break
 
-        details = []
-        for c in group_commits:
-            details.append(clean_commit_message(c.get("message", "")))
+    for commit_type, type_commits in type_groups.items():
+        # 按关键词分组
+        keyword_groups: Dict[str, List[Dict[str, Any]]] = {}
 
-        # 去重并保持顺序
-        seen = set()
-        uniq_details = []
-        for d in details:
-            key = d.strip()
-            if not key or key in seen:
-                continue
-            seen.add(key)
-            uniq_details.append(d.strip())
+        for commit in type_commits:
+            keywords = extract_keywords(commit["message"])
+            str_key = str(sorted(keywords)) if keywords else commit["message"]
 
-        main_commit["details"] = uniq_details if len(uniq_details) > 1 else []
-        merged.append(main_commit)
+            if str_key not in keyword_groups:
+                keyword_groups[str_key] = []
+            keyword_groups[str_key].append(commit)
+
+        # 合并同组提交
+        for group_commits in keyword_groups.values():
+            main_commit = group_commits[0].copy()
+            # 优先选择 feat 类型作为主条目
+            for c in group_commits:
+                if c.get("type") == "feat":
+                    main_commit = c.copy()
+                    break
+
+            details = []
+            for c in group_commits:
+                details.append(clean_commit_message(c.get("message", "")))
+
+            # 去重并保持顺序
+            seen = set()
+            uniq_details = []
+            for d in details:
+                key = d.strip()
+                if not key or key in seen:
+                    continue
+                seen.add(key)
+                uniq_details.append(d.strip())
+
+            main_commit["details"] = uniq_details if len(uniq_details) > 1 else []
+            main_commit["commit_count"] = len(group_commits)
+            merged.append(main_commit)
+
+    # 第三步：按优先级排序（优先级数字越小越靠前）
+    merged.sort(key=lambda x: (x.get("priority", 7), x.get("message", "")))
 
     return merged
 
@@ -165,11 +179,50 @@ def clean_commit_message(message: str) -> str:
     return re.sub(r"^(\w+)(\([^)]+\))?\s*:\s*", "", message).strip()
 
 
+def analyze_work_significance(commit: Dict[str, Any]) -> Dict[str, bool]:
+    """分析工作的重点和难点
+
+    判断规则：
+    - 重点：feat 类型 + 多次迭代（>=2次提交）或显式标记 is_highlight
+    - 难点：fix 类型 + 多次尝试（>=2次提交）或显式标记 is_challenge
+
+    Args:
+        commit: 提交记录（合并后的，含 commit_count）
+
+    Returns:
+        包含 is_highlight 和 is_challenge 的字典
+    """
+    commit_count = commit.get("commit_count", 1)
+    commit_type = commit.get("type", "other")
+
+    # 判断是否为重点
+    is_highlight = commit.get("is_highlight", False)
+    if commit_type == "feat" and commit_count >= 2:
+        is_highlight = True
+    if commit_type == "perf":
+        is_highlight = True
+
+    # 判断是否为难点
+    is_challenge = commit.get("is_challenge", False)
+    if commit_type == "fix" and commit_count >= 2:
+        is_challenge = True
+
+    return {
+        "is_highlight": is_highlight,
+        "is_challenge": is_challenge,
+    }
+
+
 def format_project_section(
     project: str,
     commits: List[Dict[str, Any]],
 ) -> str:
     """格式化项目部分
+
+    重点/难点通过以下方式体现（而非显式标记）：
+    - 重点工作：摘要字数更长（max_length=40），保留更多细节
+    - 难点工作：保留更多子条目细节
+    - 普通工作：简洁摘要（max_length=25）
 
     Args:
         project: 项目名称
@@ -181,11 +234,39 @@ def format_project_section(
     lines = [project]
 
     for commit in commits:
-        summary = summarize_commit(commit["message"])
+        # 获取类型标签
+        label = commit.get("label", "")
+
+        # 分析重点/难点
+        significance = analyze_work_significance(commit)
+
+        # 根据重要程度调整摘要长度
+        if significance["is_highlight"]:
+            # 重点工作：更长的摘要
+            max_len = 40
+        elif significance["is_challenge"]:
+            # 难点工作：适中的摘要
+            max_len = 35
+        else:
+            # 普通工作：简洁摘要
+            max_len = 25
+
+        # 生成摘要（含类型标签）
+        summary = summarize_commit(commit["message"], max_length=max_len, label=label)
+
         lines.append(f"  - {summary}")
+
+        # 添加子条目细节
+        # 重点/难点保留更多细节，普通工作限制细节数量
         details = commit.get("details") or []
-        for detail in details:
-            lines.append(f"    - {detail}")
+        if significance["is_highlight"] or significance["is_challenge"]:
+            # 重点/难点：保留所有细节（最多5条）
+            for detail in details[:5]:
+                lines.append(f"    - {detail}")
+        else:
+            # 普通工作：最多保留2条细节
+            for detail in details[:2]:
+                lines.append(f"    - {detail}")
 
     return "\n".join(lines)
 
@@ -207,21 +288,60 @@ def format_other_section(supplements: List[str]) -> str:
     return "\n".join(lines)
 
 
-def summarize_commit(message: str, max_length: int = 20) -> str:
-    """生成提交摘要
+def summarize_commit(
+    message: str,
+    max_length: int = 30,
+    label: str = "",
+) -> str:
+    """生成提交摘要（智能截断）
+
+    在自然断点处截断，避免割裂语义：
+    - 优先在标点符号处截断
+    - 其次在空格处截断
+    - 最后才硬截断
 
     Args:
         message: 提交信息
-        max_length: 最大长度
+        max_length: 最大长度（不含标签）
+        label: 类型标签（如 [新功能]）
 
     Returns:
-        摘要文本
+        带标签的摘要文本
     """
     cleaned = clean_commit_message(message)
 
-    # 截断过长的文本
+    # 截断过长的文本（智能截断）
     if len(cleaned) > max_length:
-        cleaned = cleaned[:max_length - 3] + "..."
+        # 在最大长度范围内寻找自然断点
+        truncated = cleaned[:max_length]
+
+        # 1. 优先在中文标点处截断
+        for punct in ["。", "，", "、", "；", "：", "！", "？"]:
+            idx = truncated.rfind(punct)
+            if idx > max_length // 2:  # 至少保留一半内容
+                truncated = truncated[:idx + 1]
+                break
+        else:
+            # 2. 尝试在英文标点处截断
+            for punct in [".", ",", ";", ":", "!", "?"]:
+                idx = truncated.rfind(punct)
+                if idx > max_length // 2:
+                    truncated = truncated[:idx + 1]
+                    break
+            else:
+                # 3. 尝试在空格处截断
+                idx = truncated.rfind(" ")
+                if idx > max_length // 2:
+                    truncated = truncated[:idx]
+                else:
+                    # 4. 硬截断并添加省略号
+                    truncated = truncated[:max_length - 3] + "..."
+
+        cleaned = truncated
+
+    # 添加类型标签
+    if label:
+        return f"{label} {cleaned.strip()}"
 
     return cleaned.strip()
 

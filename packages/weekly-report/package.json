@@ -5,7 +5,8 @@
   "scripts": {
     "postinstall": "node install-skill.js",
     "preuninstall": "node uninstall-skill.js",
-    "test": "node install-skill.js && echo 'Installation test completed.'"
+    "test": "python3 -m pytest tests/ -v --tb=short",
+    "test:install": "node install-skill.js && echo 'Installation test completed.'"
   },
   "files": [
     "SKILL.md",
