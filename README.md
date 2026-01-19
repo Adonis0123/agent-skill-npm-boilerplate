@@ -47,7 +47,7 @@ npm i -g @adonis0123/weekly-report
 
 ```bash
 # 复制下面的命令,一次性安装所有技能包
-npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator
+npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator @adonis0123/css-tailwind-styling
 ```
 
 或者分行安装（更清晰）：
@@ -60,7 +60,8 @@ npm i -g @adonis0123/react-best-practices && \
 npm i -g @adonis0123/skill-development && \
 npm i -g @adonis0123/commit && \
 npm i -g @adonis0123/staged-changes-review && \
-npm i -g @adonis0123/code-doc-generator
+npm i -g @adonis0123/code-doc-generator && \
+npm i -g @adonis0123/css-tailwind-styling
 ```
 
 ---
@@ -77,6 +78,7 @@ npm i -g @adonis0123/code-doc-generator
 | [@adonis0123/commit](./packages/commit) | 自动生成 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
 | [@adonis0123/staged-changes-review](./packages/staged-changes-review) | 暂存变更审查（风险评估、错误检测） | `npm i -g @adonis0123/staged-changes-review` |
 | [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动生成包含 Mermaid 流程图的 README 文档 | `npm i -g @adonis0123/code-doc-generator` |
+| [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS/Tailwind 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
 
 > **注意**：`@adonis0123/create-skill` 是私有包，不会发布到 npm，仅供本项目内部使用。
 
@@ -265,6 +267,21 @@ npm i -g @adonis0123/code-doc-generator
 
 在 Claude Code 中使用：`/code-doc-generator`
 
+### css-tailwind-styling
+
+CSS 和 Tailwind CSS 样式规范与最佳实践指南。
+
+- Tailwind CSS 类排序和组件抽象
+- 传统 CSS 规范（BEM、属性排序）
+- 响应式设计和性能优化
+- 无障碍访问（WCAG AA 合规）
+
+```bash
+npm i -g @adonis0123/css-tailwind-styling
+```
+
+在 Claude Code 中使用：`/css-tailwind-styling`
+
 ### create-skill（私有）
 
 项目专属的技能创建工具，用于快速创建新的 skill 包。
@@ -307,6 +324,10 @@ agent-skill-npm-boilerplate/
     ├── agent-browser/        # 浏览器自动化技能
     ├── react-best-practices/ # React 最佳实践技能
     ├── skill-development/    # 技能开发指南（远程同步）
+    ├── commit/               # 提交信息生成
+    ├── staged-changes-review/# 暂存变更审查
+    ├── code-doc-generator/   # 代码文档生成
+    ├── css-tailwind-styling/ # CSS/Tailwind 样式规范
     └── create-skill/         # 技能创建工具（私有）
 ```
 
