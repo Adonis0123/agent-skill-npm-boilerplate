@@ -140,6 +140,7 @@ npm install -g @adonis0123/css-tailwind-styling
 - [@adonis0123/staged-changes-review](https://www.npmjs.com/package/@adonis0123/staged-changes-review) - 代码审查
 - [@adonis0123/create-skill](https://www.npmjs.com/package/@adonis0123/create-skill) - 创建新技能包
 - [@adonis0123/code-doc-generator](https://www.npmjs.com/package/@adonis0123/code-doc-generator) - 代码文档生成
+- [@adonis0123/cli](https://www.npmjs.com/package/@adonis0123/cli) - CLI 工具
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！

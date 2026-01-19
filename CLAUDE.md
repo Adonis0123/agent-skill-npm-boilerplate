@@ -9,6 +9,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `@adonis0123/weekly-report` - 周报生成
 - `@adonis0123/agent-browser` - 浏览器自动化
 - `@adonis0123/react-best-practices` - React 最佳实践
+- `@adonis0123/commit` - Git 提交信息生成
+- `@adonis0123/staged-changes-review` - 暂存区变更审查
+- `@adonis0123/code-doc-generator` - 代码文档生成
+- `@adonis0123/skill-development` - 技能开发指南
+- `@adonis0123/create-skill` - 创建新技能包
+- `@adonis0123/css-tailwind-styling` - CSS/Tailwind 样式规范
+- `@adonis0123/cli` - CLI 工具
 
 ## 项目结构
 
@@ -19,7 +26,14 @@ claude-skills/
 └── packages/
     ├── weekly-report/        # 周报技能
     ├── agent-browser/        # 浏览器自动化技能
-    └── react-best-practices/ # React 最佳实践技能
+    ├── react-best-practices/ # React 最佳实践技能
+    ├── commit/               # Git 提交信息生成
+    ├── staged-changes-review/# 暂存区变更审查
+    ├── code-doc-generator/   # 代码文档生成
+    ├── skill-development/    # 技能开发指南
+    ├── create-skill/         # 创建新技能包
+    ├── css-tailwind-styling/ # CSS/Tailwind 样式规范
+    └── cli/                  # CLI 工具
 ```
 
 ## 常用命令
