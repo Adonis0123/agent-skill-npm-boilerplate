@@ -47,20 +47,22 @@ npm i -g @adonis0123/weekly-report
 
 ```bash
 # Copy this command to install all skill packages at once
-npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator
+npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/staged-changes-review @adonis0123/weekly-report
 ```
 
 Or install line by line (clearer):
 
 ```bash
-npm i -g @adonis0123/skill-cli && \
-npm i -g @adonis0123/weekly-report && \
 npm i -g @adonis0123/agent-browser && \
+npm i -g @adonis0123/skill-cli && \
+npm i -g @adonis0123/code-doc-generator && \
+npm i -g @adonis0123/commit && \
+npm i -g @adonis0123/css-tailwind-styling && \
 npm i -g @adonis0123/react-best-practices && \
 npm i -g @adonis0123/skill-development && \
-npm i -g @adonis0123/commit && \
 npm i -g @adonis0123/staged-changes-review && \
-npm i -g @adonis0123/code-doc-generator
+npm i -g @adonis0123/weekly-report
+
 ```
 
 ---
@@ -69,14 +71,16 @@ npm i -g @adonis0123/code-doc-generator
 
 | Package | Description | Installation |
 |---------|-------------|--------------|
-| [@adonis0123/skill-cli](./packages/cli) | CLI tool for managing AI Agent skills | `npm i -g @adonis0123/skill-cli` |
-| [@adonis0123/weekly-report](./packages/weekly-report) | Auto-generate weekly reports from Git commits | `npm i -g @adonis0123/weekly-report` |
-| [@adonis0123/agent-browser](./packages/agent-browser) | Browser automation (testing, screenshots, data extraction) | `npm i -g @adonis0123/agent-browser` |
-| [@adonis0123/react-best-practices](./packages/react-best-practices) | React/Next.js performance optimization best practices | `npm i -g @adonis0123/react-best-practices` |
-| [@adonis0123/skill-development](./packages/skill-development) | Official Claude Code skill development guide | `npm i -g @adonis0123/skill-development` |
-| [@adonis0123/commit](./packages/commit) | Auto-generate Conventional Commits messages | `npm i -g @adonis0123/commit` |
-| [@adonis0123/staged-changes-review](./packages/staged-changes-review) | Staged changes review (risk assessment, error detection) | `npm i -g @adonis0123/staged-changes-review` |
-| [@adonis0123/code-doc-generator](./packages/code-doc-generator) | Auto-generate README docs with Mermaid diagrams | `npm i -g @adonis0123/code-doc-generator` |
+| [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化，支持网页测试、表单填写、截图和数据提取 | `npm i -g @adonis0123/agent-browser` |
+| [@adonis0123/skill-cli](./packages/cli) | CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more | `npm i -g @adonis0123/skill-cli` |
+| [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档 | `npm i -g @adonis0123/code-doc-generator` |
+| [@adonis0123/commit](./packages/commit) | 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
+| [@adonis0123/create-skill](./packages/create-skill) | 项目专属技能创建工具，用于快速创建新的 skill 包 | - |
+| [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS 和 Tailwind CSS 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
+| [@adonis0123/react-best-practices](./packages/react-best-practices) | React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering。安装时自动从上游仓库拉取最新版本。 | `npm i -g @adonis0123/react-best-practices` |
+| [@adonis0123/skill-development](./packages/skill-development) | 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自动从 Anthropic 官方仓库拉取最新版本。 | `npm i -g @adonis0123/skill-development` |
+| [@adonis0123/staged-changes-review](./packages/staged-changes-review) | Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis | `npm i -g @adonis0123/staged-changes-review` |
+| [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤 | `npm i -g @adonis0123/weekly-report` |
 
 > **Note**: `@adonis0123/create-skill` is a private package, not published to npm, for internal project use only.
 
@@ -285,29 +289,19 @@ Use in Claude Code: `/create-skill`
 
 ```
 agent-skill-npm-boilerplate/
-├── package.json              # Root config (private: true)
-├── pnpm-workspace.yaml       # Workspace config
-├── shared/                   # Shared source code (TypeScript)
-│   └── src/
-│       ├── types.ts          # Type definitions
-│       ├── utils.ts          # Utility functions
-│       ├── install-skill.ts  # Install script
-│       └── uninstall-skill.ts# Uninstall script
-├── scripts/
-│   └── sync-shared.ts        # Sync script (esbuild bundling)
+├── package.json              # 根配置（private: true）
+├── pnpm-workspace.yaml       # workspace 配置
 └── packages/
-    ├── cli/                  # CLI tool
-    │   ├── src/
-    │   │   ├── index.ts      # Main entry
-    │   │   ├── types.ts      # Type definitions
-    │   │   ├── utils.ts      # Utility functions
-    │   │   └── commands/     # Command implementations
-    │   └── package.json
-    ├── weekly-report/        # Weekly report skill
-    ├── agent-browser/        # Browser automation skill
-    ├── react-best-practices/ # React best practices skill
-    ├── skill-development/    # Skill development guide (remote sync)
-    └── create-skill/         # Skill creation tool (private)
+    ├── agent-browser/           # 浏览器自动化，支持网页测试、表单填写、截图和数据提取
+    ├── cli/                     # CLI tool for managing AI Agent...
+    ├── code-doc-generator/      # 自动分析代码仓库并生成包含 Mermaid 流程图的 REA...
+    ├── commit/                  # 根据暂存的代码变更自动生成符合 Conventional C...
+    ├── create-skill/            # 项目专属技能创建工具，用于快速创建新的 skill 包
+    ├── css-tailwind-styling/    # CSS 和 Tailwind CSS 样式规范与最佳实践
+    ├── react-best-practices/    # React 和 Next.js 性能优化最佳实践指南，来自 ...
+    ├── skill-development/       # 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自...
+    ├── staged-changes-review/   # Comprehensive review of staged...
+    └── weekly-report/           # 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
 ```
 
 ### Shared Code Architecture

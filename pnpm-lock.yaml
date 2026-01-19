@@ -60,6 +60,8 @@ importers:
 
   packages/create-skill: {}
 
+  packages/css-tailwind-styling: {}
+
   packages/react-best-practices: {}
 
   packages/skill-development: {}

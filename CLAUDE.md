@@ -6,16 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 这是一个 **Monorepo**，管理多个 Claude Code 技能的 npm 包：
 
-- `@adonis0123/weekly-report` - 周报生成
-- `@adonis0123/agent-browser` - 浏览器自动化
-- `@adonis0123/react-best-practices` - React 最佳实践
-- `@adonis0123/commit` - Git 提交信息生成
-- `@adonis0123/staged-changes-review` - 暂存区变更审查
-- `@adonis0123/code-doc-generator` - 代码文档生成
-- `@adonis0123/skill-development` - 技能开发指南
-- `@adonis0123/create-skill` - 创建新技能包
-- `@adonis0123/css-tailwind-styling` - CSS/Tailwind 样式规范
-- `@adonis0123/cli` - CLI 工具
+- `@adonis0123/agent-browser` - 浏览器自动化，支持网页测试、表单填写、截图和数据提取
+- `@adonis0123/skill-cli` - CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more
+- `@adonis0123/code-doc-generator` - 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档
+- `@adonis0123/commit` - 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息
+- `@adonis0123/create-skill` - 项目专属技能创建工具，用于快速创建新的 skill 包
+- `@adonis0123/css-tailwind-styling` - CSS 和 Tailwind CSS 样式规范与最佳实践
+- `@adonis0123/react-best-practices` - React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering。安装时自动从上游仓库拉取最新版本。
+- `@adonis0123/skill-development` - 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自动从 Anthropic 官方仓库拉取最新版本。
+- `@adonis0123/staged-changes-review` - Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis
+- `@adonis0123/weekly-report` - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
+
 
 ## 项目结构
 
@@ -24,16 +25,16 @@ claude-skills/
 ├── package.json              # 根配置（private: true）
 ├── pnpm-workspace.yaml       # workspace 配置
 └── packages/
-    ├── weekly-report/        # 周报技能
-    ├── agent-browser/        # 浏览器自动化技能
-    ├── react-best-practices/ # React 最佳实践技能
-    ├── commit/               # Git 提交信息生成
-    ├── staged-changes-review/# 暂存区变更审查
-    ├── code-doc-generator/   # 代码文档生成
-    ├── skill-development/    # 技能开发指南
-    ├── create-skill/         # 创建新技能包
-    ├── css-tailwind-styling/ # CSS/Tailwind 样式规范
-    └── cli/                  # CLI 工具
+    ├── agent-browser/           # 浏览器自动化，支持网页测试、表单填写、截图和数据提取
+    ├── cli/                     # CLI tool for managing AI Agent...
+    ├── code-doc-generator/      # 自动分析代码仓库并生成包含 Mermaid 流程图的 REA...
+    ├── commit/                  # 根据暂存的代码变更自动生成符合 Conventional C...
+    ├── create-skill/            # 项目专属技能创建工具，用于快速创建新的 skill 包
+    ├── css-tailwind-styling/    # CSS 和 Tailwind CSS 样式规范与最佳实践
+    ├── react-best-practices/    # React 和 Next.js 性能优化最佳实践指南，来自 ...
+    ├── skill-development/       # 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自...
+    ├── staged-changes-review/   # Comprehensive review of staged...
+    └── weekly-report/           # 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
 ```
 
 ## 常用命令

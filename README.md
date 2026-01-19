@@ -47,21 +47,22 @@ npm i -g @adonis0123/weekly-report
 
 ```bash
 # 复制下面的命令,一次性安装所有技能包
-npm i -g @adonis0123/skill-cli @adonis0123/weekly-report @adonis0123/agent-browser @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/commit @adonis0123/staged-changes-review @adonis0123/code-doc-generator @adonis0123/css-tailwind-styling
+npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/staged-changes-review @adonis0123/weekly-report
 ```
 
 或者分行安装（更清晰）：
 
 ```bash
-npm i -g @adonis0123/skill-cli && \
-npm i -g @adonis0123/weekly-report && \
 npm i -g @adonis0123/agent-browser && \
+npm i -g @adonis0123/skill-cli && \
+npm i -g @adonis0123/code-doc-generator && \
+npm i -g @adonis0123/commit && \
+npm i -g @adonis0123/css-tailwind-styling && \
 npm i -g @adonis0123/react-best-practices && \
 npm i -g @adonis0123/skill-development && \
-npm i -g @adonis0123/commit && \
 npm i -g @adonis0123/staged-changes-review && \
-npm i -g @adonis0123/code-doc-generator && \
-npm i -g @adonis0123/css-tailwind-styling
+npm i -g @adonis0123/weekly-report
+
 ```
 
 ---
@@ -70,15 +71,16 @@ npm i -g @adonis0123/css-tailwind-styling
 
 | 包名 | 描述 | 安装命令 |
 |------|------|----------|
-| [@adonis0123/skill-cli](./packages/cli) | CLI 工具，管理 AI Agent 技能 | `npm i -g @adonis0123/skill-cli` |
-| [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报 | `npm i -g @adonis0123/weekly-report` |
-| [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化（测试、截图、数据提取） | `npm i -g @adonis0123/agent-browser` |
-| [@adonis0123/react-best-practices](./packages/react-best-practices) | React/Next.js 性能优化最佳实践 | `npm i -g @adonis0123/react-best-practices` |
-| [@adonis0123/skill-development](./packages/skill-development) | Claude Code 官方技能开发指南 | `npm i -g @adonis0123/skill-development` |
-| [@adonis0123/commit](./packages/commit) | 自动生成 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
-| [@adonis0123/staged-changes-review](./packages/staged-changes-review) | 暂存变更审查（风险评估、错误检测） | `npm i -g @adonis0123/staged-changes-review` |
-| [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动生成包含 Mermaid 流程图的 README 文档 | `npm i -g @adonis0123/code-doc-generator` |
-| [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS/Tailwind 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
+| [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化，支持网页测试、表单填写、截图和数据提取 | `npm i -g @adonis0123/agent-browser` |
+| [@adonis0123/skill-cli](./packages/cli) | CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more | `npm i -g @adonis0123/skill-cli` |
+| [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档 | `npm i -g @adonis0123/code-doc-generator` |
+| [@adonis0123/commit](./packages/commit) | 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
+| [@adonis0123/create-skill](./packages/create-skill) | 项目专属技能创建工具，用于快速创建新的 skill 包 | - |
+| [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS 和 Tailwind CSS 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
+| [@adonis0123/react-best-practices](./packages/react-best-practices) | React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering。安装时自动从上游仓库拉取最新版本。 | `npm i -g @adonis0123/react-best-practices` |
+| [@adonis0123/skill-development](./packages/skill-development) | 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自动从 Anthropic 官方仓库拉取最新版本。 | `npm i -g @adonis0123/skill-development` |
+| [@adonis0123/staged-changes-review](./packages/staged-changes-review) | Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis | `npm i -g @adonis0123/staged-changes-review` |
+| [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤 | `npm i -g @adonis0123/weekly-report` |
 
 > **注意**：`@adonis0123/create-skill` 是私有包，不会发布到 npm，仅供本项目内部使用。
 

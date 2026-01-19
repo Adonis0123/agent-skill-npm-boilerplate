@@ -18,7 +18,8 @@ claude-skills/
 │   ├── weekly-report/        # Local mode skill
 │   ├── agent-browser/        # Local mode skill
 │   ├── react-best-practices/ # Remote mode skill
-│   └── skill-development/    # Remote mode skill
+│   ├── skill-development/    # Remote mode skill
+│   └── css-tailwind-styling/ # CSS/Tailwind styling guide
 ├── shared/src/               # Shared install/uninstall scripts
 └── scripts/                  # Sync and publish utilities
 ```
