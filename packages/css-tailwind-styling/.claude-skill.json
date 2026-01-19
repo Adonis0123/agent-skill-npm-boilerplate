@@ -1,7 +1,7 @@
 {
-  "name": "staged-changes-review",
+  "name": "css-tailwind-styling",
   "version": "1.0.0",
-  "package": "@adonis0123/staged-changes-review",
+  "package": "@adonis0123/css-tailwind-styling",
   "files": {
     "references": "references/"
   },

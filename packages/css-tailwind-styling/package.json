@@ -1,0 +1,38 @@
+{
+  "name": "@adonis0123/css-tailwind-styling",
+  "version": "1.0.0",
+  "description": "Claude Code 技能 - CSS 和 Tailwind CSS 样式规范与最佳实践",
+  "keywords": [
+    "claude-code",
+    "skill",
+    "css",
+    "tailwindcss",
+    "styling",
+    "best-practices",
+    "responsive-design",
+    "accessibility"
+  ],
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/css-tailwind-styling"
+  },
+  "bugs": {
+    "url": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/issues"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/css-tailwind-styling#readme"
+}
