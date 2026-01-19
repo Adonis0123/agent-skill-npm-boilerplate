@@ -9,6 +9,45 @@ from typing import Any, Dict, List, Optional
 from src.git_analyzer import group_commits_by_project, COMMIT_TYPE_CONFIG
 
 
+# 琐碎细节关键词列表
+TRIVIAL_DETAIL_KEYWORDS = [
+    "完善",
+    "更新文档",
+    "调整样式",
+    "优化格式",
+    "移除日志",
+    "删除调试",
+    "代码清理",
+    "清理代码",
+    "移除调试",
+    "删除日志",
+]
+
+
+def is_trivial_detail(detail: str) -> bool:
+    """判断细节是否琐碎（适度过滤）
+
+    Args:
+        detail: 细节描述
+
+    Returns:
+        是否为琐碎细节
+    """
+    detail_stripped = detail.strip()
+
+    # 完全匹配琐碎关键词
+    if detail_stripped in ["完善相关文档", "代码清理", "样式优化"]:
+        return True
+
+    # 包含琐碎关键词，但描述过短（<8 字）
+    if len(detail_stripped) < 8:
+        for kw in TRIVIAL_DETAIL_KEYWORDS:
+            if kw in detail_stripped:
+                return True
+
+    return False
+
+
 def generate_report(
     commits: List[Dict[str, Any]],
     supplements: Optional[List[str]] = None,
@@ -129,12 +168,13 @@ def merge_related_commits(
             for c in group_commits:
                 details.append(clean_commit_message(c.get("message", "")))
 
-            # 去重并保持顺序
+            # 去重并保持顺序，同时过滤琐碎细节
             seen = set()
             uniq_details = []
             for d in details:
                 key = d.strip()
-                if not key or key in seen:
+                # 过滤空内容、重复内容、琐碎细节
+                if not key or key in seen or is_trivial_detail(d):
                     continue
                 seen.add(key)
                 uniq_details.append(d.strip())
@@ -243,13 +283,13 @@ def format_project_section(
         # 根据重要程度调整摘要长度
         if significance["is_highlight"]:
             # 重点工作：更长的摘要
-            max_len = 40
+            max_len = 30  # 从 40 减到 30
         elif significance["is_challenge"]:
             # 难点工作：适中的摘要
-            max_len = 35
+            max_len = 25  # 从 35 减到 25
         else:
             # 普通工作：简洁摘要
-            max_len = 25
+            max_len = 20  # 从 25 减到 20
 
         # 生成摘要（含类型标签）
         summary = summarize_commit(commit["message"], max_length=max_len, label=label)
@@ -260,12 +300,12 @@ def format_project_section(
         # 重点/难点保留更多细节，普通工作限制细节数量
         details = commit.get("details") or []
         if significance["is_highlight"] or significance["is_challenge"]:
-            # 重点/难点：保留所有细节（最多5条）
-            for detail in details[:5]:
+            # 重点/难点：最多保留 3 条细节
+            for detail in details[:3]:
                 lines.append(f"    - {detail}")
         else:
-            # 普通工作：最多保留2条细节
-            for detail in details[:2]:
+            # 普通工作：最多保留 1 条细节
+            for detail in details[:1]:
                 lines.append(f"    - {detail}")
 
     return "\n".join(lines)
@@ -339,9 +379,9 @@ def summarize_commit(
 
         cleaned = truncated
 
-    # 添加类型标签
-    if label:
-        return f"{label} {cleaned.strip()}"
+    # 添加类型标签（已禁用以简化输出）
+    # if label:
+    #     return f"{label} {cleaned.strip()}"
 
     return cleaned.strip()
 

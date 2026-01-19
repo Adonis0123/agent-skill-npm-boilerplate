@@ -28,6 +28,7 @@ COMMIT_TYPE_CONFIG = {
 
 # 琐碎提交的关键词
 TRIVIAL_PATTERNS = [
+    # 现有规则
     r"^fix\s*typo",
     r"^typo",
     r"^update\s*(readme|changelog)",
@@ -38,6 +39,27 @@ TRIVIAL_PATTERNS = [
     r"^format",
     r"^lint",
     r"^style:",
+    # 新增 - 明确琐碎的文档维护
+    r"完善.*文档$",
+    r"更新.*文档$",
+    r"^docs:.*typo",
+    r"^docs:.*fix\s*typo",
+    # 新增 - 代码清理相关
+    r"^代码清理$",
+    r"^清理.*代码$",
+    r"^chore:.*clean",
+    r"^chore:.*cleanup",
+    # 新增 - 调试和日志移除
+    r"移除.*调试",
+    r"删除.*调试",
+    r"移除.*日志$",
+    r"删除.*日志$",
+    r"^chore:.*log$",
+    r"^chore:.*debug",
+    # 新增 - 纯样式调整
+    r"^样式调整$",
+    r"^调整.*样式$",
+    r"^style:.*调整",
 ]
 
 
@@ -110,6 +132,129 @@ def build_author_pattern(
     return "(" + "|".join(parts) + ")"
 
 
+def analyze_commit_diff(repo_path: Path, commit_hash: str) -> Dict[str, Any]:
+    """分析提交的 diff 统计
+
+    Args:
+        repo_path: 仓库路径
+        commit_hash: 提交哈希
+
+    Returns:
+        {
+            "files_changed": 5,
+            "insertions": 120,
+            "deletions": 30,
+            "total_changes": 150,
+            "is_small_change": False  # <10 行变更
+        }
+    """
+    try:
+        result = subprocess.run(
+            ["git", "show", "--stat", "--format=", commit_hash],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            return {
+                "files_changed": 0,
+                "insertions": 0,
+                "deletions": 0,
+                "total_changes": 0,
+                "is_small_change": False,
+            }
+
+        # 解析统计行，例如: "3 files changed, 120 insertions(+), 30 deletions(-)"
+        lines = result.stdout.strip().split("\n")
+        stats_line = lines[-1] if lines else ""
+
+        files = 0
+        insertions = 0
+        deletions = 0
+
+        # 提取数字
+        if "file" in stats_line:
+            match = re.search(r"(\d+)\s+file", stats_line)
+            if match:
+                files = int(match.group(1))
+
+        if "insertion" in stats_line:
+            match = re.search(r"(\d+)\s+insertion", stats_line)
+            if match:
+                insertions = int(match.group(1))
+
+        if "deletion" in stats_line:
+            match = re.search(r"(\d+)\s+deletion", stats_line)
+            if match:
+                deletions = int(match.group(1))
+
+        total = insertions + deletions
+
+        return {
+            "files_changed": files,
+            "insertions": insertions,
+            "deletions": deletions,
+            "total_changes": total,
+            "is_small_change": total < 10,  # 适度过滤：<10 行为小变更
+        }
+    except Exception:
+        return {
+            "files_changed": 0,
+            "insertions": 0,
+            "deletions": 0,
+            "total_changes": 0,
+            "is_small_change": False,
+        }
+
+
+def is_trivial_file_change(repo_path: Path, commit_hash: str) -> bool:
+    """判断提交是否仅修改琐碎文件
+
+    琐碎文件包括：
+    - package-lock.json, yarn.lock, pnpm-lock.yaml
+    - .gitignore, .editorconfig, .prettierrc
+
+    Args:
+        repo_path: 仓库路径
+        commit_hash: 提交哈希
+
+    Returns:
+        是否为琐碎文件变更
+    """
+    try:
+        result = subprocess.run(
+            ["git", "show", "--name-only", "--format=", commit_hash],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            return False
+
+        files = [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
+
+        if not files:
+            return False
+
+        trivial_files = {
+            "package-lock.json",
+            "yarn.lock",
+            "pnpm-lock.yaml",
+            ".gitignore",
+            ".editorconfig",
+            ".prettierrc",
+            ".prettierignore",
+        }
+
+        # 如果所有文件都是琐碎文件，返回 True
+        return all(f in trivial_files for f in files)
+
+    except Exception:
+        return False
+
+
 def get_commits(
     repo_path: Path,
     start_date: date,
@@ -163,10 +308,23 @@ def get_commits(
 
             parts = line.split("|")
             if len(parts) >= 4:
-                parsed = parse_commit_message(parts[1])
+                commit_hash = parts[0]
+                message = parts[1]
+
+                # 解析提交信息
+                parsed = parse_commit_message(message)
+
+                # 添加 diff 分析
+                diff_stats = analyze_commit_diff(repo_path, commit_hash)
+                trivial_file = is_trivial_file_change(repo_path, commit_hash)
+
+                # 基于 diff 判断是否琐碎
+                if diff_stats["is_small_change"] or trivial_file:
+                    parsed["is_trivial"] = True
+
                 commits.append({
-                    "hash": parts[0],
-                    "message": parts[1],
+                    "hash": commit_hash,
+                    "message": message,
                     "author": parts[2],
                     "date": parts[3],
                     "type": parsed["type"],
@@ -176,6 +334,7 @@ def get_commits(
                     "label": parsed["label"],
                     "priority": parsed["priority"],
                     "project": get_repo_name(repo_path),
+                    "diff_stats": diff_stats,
                 })
 
         return commits
