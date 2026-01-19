@@ -21,7 +21,6 @@ class TestParseCommitMessage:
         assert result["is_trivial"] is False
         assert result["is_highlight"] is True
         assert result["is_challenge"] is False
-        assert result["label"] == "[新功能]"
         assert result["priority"] == 1
 
     def test_parse_fix_commit(self):
@@ -34,7 +33,6 @@ class TestParseCommitMessage:
         assert result["is_trivial"] is False
         assert result["is_highlight"] is False
         assert result["is_challenge"] is True
-        assert result["label"] == "[修复]"
         assert result["priority"] == 2
 
     def test_parse_refactor_commit(self):
@@ -44,7 +42,6 @@ class TestParseCommitMessage:
         assert result["type"] == "refactor"
         assert result["scope"] is None
         assert result["description"] == "重构用户模块"
-        assert result["label"] == "[优化]"
         assert result["priority"] == 3
 
     def test_parse_perf_commit(self):
@@ -53,7 +50,6 @@ class TestParseCommitMessage:
 
         assert result["type"] == "perf"
         assert result["is_highlight"] is True
-        assert result["label"] == "[性能]"
         assert result["priority"] == 3
 
     def test_parse_docs_commit(self):
@@ -61,7 +57,6 @@ class TestParseCommitMessage:
         result = parse_commit_message("docs: 更新 API 文档")
 
         assert result["type"] == "docs"
-        assert result["label"] == "[文档]"
         assert result["priority"] == 5
 
     def test_parse_commit_without_type(self):
@@ -71,7 +66,6 @@ class TestParseCommitMessage:
         assert result["type"] == "other"
         assert result["scope"] is None
         assert result["description"] == "更新用户界面"
-        assert result["label"] == ""
         assert result["priority"] == 7
 
     def test_parse_trivial_typo_commit(self):
@@ -100,12 +94,11 @@ class TestParseCommitMessage:
 
 
 class TestCommitTypeConfig:
-    """COMMIT_TYPE_CONFIG 配置测试"""
+    """COMMIT_TYPE_CONFIG 配置测试（无标签风格）"""
 
     def test_feat_config(self):
         """测试 feat 类型配置"""
         config = COMMIT_TYPE_CONFIG["feat"]
-        assert config["label"] == "[新功能]"
         assert config["priority"] == 1
         assert config["is_highlight"] is True
         assert config["is_challenge"] is False
@@ -113,14 +106,13 @@ class TestCommitTypeConfig:
     def test_fix_config(self):
         """测试 fix 类型配置"""
         config = COMMIT_TYPE_CONFIG["fix"]
-        assert config["label"] == "[修复]"
         assert config["priority"] == 2
         assert config["is_highlight"] is False
         assert config["is_challenge"] is True
 
     def test_all_types_have_required_fields(self):
         """测试所有类型都有必需字段"""
-        required_fields = ["label", "priority", "is_highlight", "is_challenge"]
+        required_fields = ["priority", "is_highlight", "is_challenge"]
 
         for type_name, config in COMMIT_TYPE_CONFIG.items():
             for field in required_fields:

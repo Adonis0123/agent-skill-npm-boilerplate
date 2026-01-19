@@ -11,7 +11,7 @@ sys.path.insert(0, str(src_path))
 
 @pytest.fixture
 def sample_commits():
-    """示例提交记录"""
+    """示例提交记录（无标签风格）"""
     return [
         {
             "hash": "abc123",
@@ -22,7 +22,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": True,
             "is_challenge": False,
-            "label": "[新功能]",
             "priority": 1,
             "project": "project-frontend",
         },
@@ -35,7 +34,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": True,
             "is_challenge": False,
-            "label": "[新功能]",
             "priority": 1,
             "project": "project-frontend",
         },
@@ -48,7 +46,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": False,
             "is_challenge": True,
-            "label": "[修复]",
             "priority": 2,
             "project": "project-frontend",
         },
@@ -61,7 +58,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": False,
             "is_challenge": True,
-            "label": "[修复]",
             "priority": 2,
             "project": "project-frontend",
         },
@@ -74,7 +70,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": False,
             "is_challenge": False,
-            "label": "[优化]",
             "priority": 3,
             "project": "project-frontend",
         },
@@ -87,7 +82,6 @@ def sample_commits():
             "is_trivial": False,
             "is_highlight": False,
             "is_challenge": False,
-            "label": "[文档]",
             "priority": 5,
             "project": "project-frontend",
         },
@@ -107,7 +101,6 @@ def trivial_commits():
             "is_trivial": True,
             "is_highlight": False,
             "is_challenge": False,
-            "label": "",
             "priority": 7,
             "project": "project-frontend",
         },
@@ -120,7 +113,6 @@ def trivial_commits():
             "is_trivial": True,
             "is_highlight": False,
             "is_challenge": False,
-            "label": "",
             "priority": 7,
             "project": "project-frontend",
         },
@@ -139,7 +131,6 @@ def single_commit():
         "is_trivial": False,
         "is_highlight": True,
         "is_challenge": False,
-        "label": "[新功能]",
         "priority": 1,
         "project": "project-backend",
     }
