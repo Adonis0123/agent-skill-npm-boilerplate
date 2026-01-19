@@ -54,6 +54,8 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
+  packages/code-doc-generator: {}
+
   packages/commit: {}
 
   packages/create-skill: {}
@@ -61,6 +63,8 @@ importers:
   packages/react-best-practices: {}
 
   packages/skill-development: {}
+
+  packages/staged-changes-review: {}
 
   packages/weekly-report: {}
 
