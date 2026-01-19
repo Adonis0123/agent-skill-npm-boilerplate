@@ -39,6 +39,21 @@ claude-skills/
 
 ## 常用命令
 
+### 本地安装技能
+
+```bash
+# 方法 1：交互式选择安装（推荐）
+pnpm install:select
+
+# 方法 2：直接运行安装脚本
+cd packages/weekly-report && node install-skill.js
+
+# 方法 3：安装所有包
+pnpm -r install
+```
+
+### 测试与发布
+
 ```bash
 # 测试所有包
 pnpm test:all
