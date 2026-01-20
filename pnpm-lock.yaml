@@ -66,6 +66,8 @@ importers:
 
   packages/skill-development: {}
 
+  packages/spec-flow: {}
+
   packages/staged-changes-review: {}
 
   packages/weekly-report: {}

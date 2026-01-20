@@ -47,7 +47,7 @@ npm i -g @adonis0123/weekly-report
 
 ```bash
 # 复制下面的命令,一次性安装所有技能包
-npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/staged-changes-review @adonis0123/weekly-report
+npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/spec-flow @adonis0123/staged-changes-review @adonis0123/weekly-report
 ```
 
 或者分行安装（更清晰）：
@@ -60,6 +60,7 @@ npm i -g @adonis0123/commit && \
 npm i -g @adonis0123/css-tailwind-styling && \
 npm i -g @adonis0123/react-best-practices && \
 npm i -g @adonis0123/skill-development && \
+npm i -g @adonis0123/spec-flow && \
 npm i -g @adonis0123/staged-changes-review && \
 npm i -g @adonis0123/weekly-report
 
@@ -79,6 +80,7 @@ npm i -g @adonis0123/weekly-report
 | [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS 和 Tailwind CSS 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
 | [@adonis0123/react-best-practices](./packages/react-best-practices) | React 和 Next.js 性能优化最佳实践指南，来自 Vercel Engineering。安装时自动从上游仓库拉取最新版本。 | `npm i -g @adonis0123/react-best-practices` |
 | [@adonis0123/skill-development](./packages/skill-development) | 技能开发指南，提供创建有效技能的完整流程和最佳实践。安装时自动从 Anthropic 官方仓库拉取最新版本。 | `npm i -g @adonis0123/skill-development` |
+| [@adonis0123/spec-flow](./packages/spec-flow) | Structured, specification-driven development workflow with living documentation | `npm i -g @adonis0123/spec-flow` |
 | [@adonis0123/staged-changes-review](./packages/staged-changes-review) | Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis | `npm i -g @adonis0123/staged-changes-review` |
 | [@adonis0123/weekly-report](./packages/weekly-report) | 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤 | `npm i -g @adonis0123/weekly-report` |
 

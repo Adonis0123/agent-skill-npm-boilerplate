@@ -1,0 +1,40 @@
+{
+  "name": "@adonis0123/spec-flow",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - Structured, specification-driven development workflow with living documentation",
+  "keywords": [
+    "claude-code",
+    "skill",
+    "specification",
+    "workflow",
+    "development",
+    "requirements",
+    "design",
+    "documentation"
+  ],
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    "templates/",
+    "scripts/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/spec-flow"
+  },
+  "bugs": {
+    "url": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/issues"
+  },
+  "homepage": "https://github.com/echoVic/spec-flow"
+}

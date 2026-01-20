@@ -1,0 +1,28 @@
+{
+  "name": "spec-flow",
+  "version": "1.0.0",
+  "package": "@adonis0123/spec-flow",
+  "remoteSource": "echoVic/spec-flow",
+  "files": {
+    "SKILL.md": "SKILL.md",
+    "references": "references/",
+    "templates": "templates/",
+    "scripts": "scripts/"
+  },
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": {
+        "global": ".cursor/skills",
+        "project": ".cursor/skills"
+      }
+    }
+  }
+}
