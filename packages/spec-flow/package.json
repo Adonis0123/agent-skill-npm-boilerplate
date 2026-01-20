@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/spec-flow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code Skill - Structured, specification-driven development workflow with living documentation",
   "keywords": [
     "claude-code",
