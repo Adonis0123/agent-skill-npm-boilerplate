@@ -172,7 +172,28 @@ This compiles `shared/src/*.ts` and generates:
 - `packages/{{SKILL_NAME}}/install-skill.js`
 - `packages/{{SKILL_NAME}}/uninstall-skill.js`
 
-### Step 7: Test and Verify
+### Step 7: Update Workspace and Documentation
+
+After generating the install scripts, update the workspace and documentation files:
+
+```bash
+# Update pnpm-lock.yaml to include the new package in workspace
+pnpm install
+
+# Update all documentation files
+pnpm sync:docs
+```
+
+This step is **CRITICAL** - it ensures:
+- The new package is added to `pnpm-lock.yaml`
+- All documentation files are updated with the new package:
+  - `README.md` and `README.en.md` - Install commands and package table
+  - `CLAUDE.md` - Project guide package list
+  - `packages/create-skill/SKILL.md` - Project structure examples
+
+**Note**: Always run these commands after creating a new skill package, otherwise the monorepo will be in an inconsistent state.
+
+### Step 8: Test and Verify
 
 Test the package installation:
 
@@ -192,7 +213,7 @@ Clean up test files:
 rm -rf packages/{{SKILL_NAME}}/.claude packages/{{SKILL_NAME}}/.cursor
 ```
 
-### Step 8: Update "更多技能" Template
+### Step 9: Update "更多技能" Template
 
 **IMPORTANT:** Add the new skill to the template so other packages' README will include it.
 
@@ -214,6 +235,8 @@ pnpm sync:skills
 |------|---------|
 | Create directory | `mkdir -p packages/SKILL_NAME/{references,src}` |
 | Sync scripts | `pnpm sync` |
+| Update workspace | `pnpm install` |
+| Update docs | `pnpm sync:docs` |
 | Test package | `cd packages/SKILL_NAME && npm test` |
 | Test all | `pnpm test:all` |
 | Update "更多技能" | `pnpm sync:skills` |
