@@ -6,7 +6,7 @@
 import re
 from typing import Any, Dict, List, Optional
 
-from src.git_analyzer import group_commits_by_project, COMMIT_TYPE_CONFIG
+from src.git_analyzer import group_commits_by_project
 
 
 def generate_report(
@@ -219,10 +219,11 @@ def format_project_section(
 ) -> str:
     """格式化项目部分
 
-    重点/难点通过以下方式体现（而非显式标记）：
-    - 重点工作：摘要字数更长（max_length=40），保留更多细节
-    - 难点工作：保留更多子条目细节
-    - 普通工作：简洁摘要（max_length=25）
+    采用无标签风格，直接描述工作内容。
+    重点/难点通过以下方式体现：
+    - 重点工作：摘要字数更长（max_length=40），保留 2-3 个子条目
+    - 难点工作：保留排查过程细节
+    - 普通工作：简洁摘要（max_length=25），无子条目
 
     Args:
         project: 项目名称
@@ -234,9 +235,6 @@ def format_project_section(
     lines = [project]
 
     for commit in commits:
-        # 获取类型标签
-        label = commit.get("label", "")
-
         # 分析重点/难点
         significance = analyze_work_significance(commit)
 
@@ -251,22 +249,19 @@ def format_project_section(
             # 普通工作：简洁摘要
             max_len = 25
 
-        # 生成摘要（含类型标签）
-        summary = summarize_commit(commit["message"], max_length=max_len, label=label)
+        # 生成摘要（无标签）
+        summary = summarize_commit(commit["message"], max_length=max_len)
 
         lines.append(f"  - {summary}")
 
         # 添加子条目细节
-        # 重点/难点保留更多细节，普通工作限制细节数量
+        # 重点/难点保留细节，普通工作不展开
         details = commit.get("details") or []
         if significance["is_highlight"] or significance["is_challenge"]:
-            # 重点/难点：保留所有细节（最多5条）
-            for detail in details[:5]:
+            # 重点/难点：保留 2-3 条细节
+            for detail in details[:3]:
                 lines.append(f"    - {detail}")
-        else:
-            # 普通工作：最多保留2条细节
-            for detail in details[:2]:
-                lines.append(f"    - {detail}")
+        # 普通工作：不展开子条目
 
     return "\n".join(lines)
 
@@ -291,9 +286,8 @@ def format_other_section(supplements: List[str]) -> str:
 def summarize_commit(
     message: str,
     max_length: int = 30,
-    label: str = "",
 ) -> str:
-    """生成提交摘要（智能截断）
+    """生成提交摘要（智能截断，无标签风格）
 
     在自然断点处截断，避免割裂语义：
     - 优先在标点符号处截断
@@ -302,11 +296,10 @@ def summarize_commit(
 
     Args:
         message: 提交信息
-        max_length: 最大长度（不含标签）
-        label: 类型标签（如 [新功能]）
+        max_length: 最大长度
 
     Returns:
-        带标签的摘要文本
+        摘要文本（无标签）
     """
     cleaned = clean_commit_message(message)
 
@@ -338,10 +331,6 @@ def summarize_commit(
                     truncated = truncated[:max_length - 3] + "..."
 
         cleaned = truncated
-
-    # 添加类型标签
-    if label:
-        return f"{label} {cleaned.strip()}"
 
     return cleaned.strip()
 

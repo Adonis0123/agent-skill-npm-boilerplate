@@ -10,34 +10,56 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
-# 提交类型配置
+# 提交类型配置（无标签风格，直接描述工作内容）
 COMMIT_TYPE_CONFIG = {
-    "feat": {"label": "[新功能]", "priority": 1, "is_highlight": True, "is_challenge": False},
-    "fix": {"label": "[修复]", "priority": 2, "is_highlight": False, "is_challenge": True},
-    "refactor": {"label": "[优化]", "priority": 3, "is_highlight": False, "is_challenge": False},
-    "perf": {"label": "[性能]", "priority": 3, "is_highlight": True, "is_challenge": False},
-    "style": {"label": "[样式]", "priority": 6, "is_highlight": False, "is_challenge": False},
-    "docs": {"label": "[文档]", "priority": 5, "is_highlight": False, "is_challenge": False},
-    "test": {"label": "[测试]", "priority": 4, "is_highlight": False, "is_challenge": False},
-    "chore": {"label": "[杂项]", "priority": 6, "is_highlight": False, "is_challenge": False},
-    "build": {"label": "[构建]", "priority": 4, "is_highlight": False, "is_challenge": False},
-    "ci": {"label": "[CI]", "priority": 5, "is_highlight": False, "is_challenge": False},
-    "other": {"label": "", "priority": 7, "is_highlight": False, "is_challenge": False},
+    "feat": {"priority": 1, "is_highlight": True, "is_challenge": False},
+    "fix": {"priority": 2, "is_highlight": False, "is_challenge": True},
+    "refactor": {"priority": 3, "is_highlight": False, "is_challenge": False},
+    "perf": {"priority": 3, "is_highlight": True, "is_challenge": False},
+    "style": {"priority": 6, "is_highlight": False, "is_challenge": False},
+    "docs": {"priority": 5, "is_highlight": False, "is_challenge": False},
+    "test": {"priority": 4, "is_highlight": False, "is_challenge": False},
+    "chore": {"priority": 6, "is_highlight": False, "is_challenge": False},
+    "build": {"priority": 4, "is_highlight": False, "is_challenge": False},
+    "ci": {"priority": 5, "is_highlight": False, "is_challenge": False},
+    "other": {"priority": 7, "is_highlight": False, "is_challenge": False},
 }
 
 
-# 琐碎提交的关键词
+# 琐碎提交的关键词（强制过滤）
 TRIVIAL_PATTERNS = [
+    # typo 修复
     r"^fix\s*typo",
     r"^typo",
-    r"^update\s*(readme|changelog)",
-    r"^merge\s+branch",
-    r"^merge\s+pull\s+request",
-    r"^wip$",
-    r"^wip:",
+    # 格式化/lint
     r"^format",
     r"^lint",
     r"^style:",
+    r"^chore:\s*format",
+    r"^chore:\s*lint",
+    # 代码清理
+    r"^chore:\s*clean",
+    r"^refactor:\s*clean",
+    r"remove\s*(unused|debug|console)",
+    r"删除.*日志",
+    r"移除.*console",
+    # 文档完善（非重大更新）
+    r"^docs:\s*(update|fix|tweak)",
+    r"^chore:\s*docs",
+    r"完善.*文档",
+    r"更新.*readme",
+    # Merge 提交
+    r"^merge\s+branch",
+    r"^merge\s+pull\s+request",
+    # WIP 提交
+    r"^wip$",
+    r"^wip:",
+    # 样式微调
+    r"^style:\s*(tweak|adjust|fix)",
+    r"样式.*微调",
+    # 依赖更新（小幅）
+    r"^chore\(deps\):",
+    r"bump.*version",
 ]
 
 
@@ -173,7 +195,6 @@ def get_commits(
                     "is_trivial": parsed["is_trivial"],
                     "is_highlight": parsed["is_highlight"],
                     "is_challenge": parsed["is_challenge"],
-                    "label": parsed["label"],
                     "priority": parsed["priority"],
                     "project": get_repo_name(repo_path),
                 })
@@ -219,7 +240,6 @@ def parse_commit_message(message: str) -> Dict[str, Any]:
         - is_trivial: 是否为琐碎提交
         - is_highlight: 是否为重点（feat/perf 类型）
         - is_challenge: 是否为难点（fix 类型）
-        - label: 类型标签（如 [新功能]）
         - priority: 优先级（用于排序）
     """
     result = {
@@ -229,7 +249,6 @@ def parse_commit_message(message: str) -> Dict[str, Any]:
         "is_trivial": False,
         "is_highlight": False,
         "is_challenge": False,
-        "label": "",
         "priority": 7,
     }
 
@@ -257,7 +276,6 @@ def parse_commit_message(message: str) -> Dict[str, Any]:
     type_config = COMMIT_TYPE_CONFIG.get(commit_type, COMMIT_TYPE_CONFIG["other"])
     result["is_highlight"] = type_config["is_highlight"]
     result["is_challenge"] = type_config["is_challenge"]
-    result["label"] = type_config["label"]
     result["priority"] = type_config["priority"]
 
     return result

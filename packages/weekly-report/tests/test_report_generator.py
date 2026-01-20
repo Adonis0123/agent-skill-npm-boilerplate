@@ -64,17 +64,18 @@ class TestCleanCommitMessage:
 
 
 class TestSummarizeCommit:
-    """summarize_commit 函数测试"""
+    """summarize_commit 函数测试（无标签风格）"""
 
     def test_short_message_unchanged(self):
         """测试短消息不变"""
         result = summarize_commit("fix: 修复问题")
         assert result == "修复问题"
 
-    def test_add_label(self):
-        """测试添加类型标签"""
-        result = summarize_commit("fix: 修复问题", label="[修复]")
-        assert result == "[修复] 修复问题"
+    def test_no_label_added(self):
+        """测试不添加类型标签（无标签风格）"""
+        result = summarize_commit("fix: 修复问题")
+        assert "[修复]" not in result
+        assert result == "修复问题"
 
     def test_smart_truncate_at_chinese_punct(self):
         """测试在中文标点处智能截断"""
@@ -228,13 +229,12 @@ class TestAnalyzeWorkSignificance:
 
 
 class TestFormatProjectSection:
-    """format_project_section 函数测试"""
+    """format_project_section 函数测试（无标签风格）"""
 
-    def test_format_with_label(self):
-        """测试带标签格式化"""
+    def test_format_without_label(self):
+        """测试无标签格式化"""
         commits = [{
             "message": "feat: 新功能开发",
-            "label": "[新功能]",
             "type": "feat",
             "is_highlight": True,
             "is_challenge": False,
@@ -244,13 +244,13 @@ class TestFormatProjectSection:
         result = format_project_section("project-a", commits)
 
         assert "project-a" in result
-        assert "[新功能]" in result
+        assert "新功能开发" in result
+        assert "[新功能]" not in result  # 无标签风格
 
     def test_format_with_challenge(self):
         """测试难点工作格式化（通过细节体现）"""
         commits = [{
             "message": "fix: 修复认证问题",
-            "label": "[修复]",
             "type": "fix",
             "is_highlight": False,
             "is_challenge": True,
@@ -260,34 +260,34 @@ class TestFormatProjectSection:
         }]
         result = format_project_section("project-a", commits)
 
-        assert "[修复]" in result
-        # 难点工作应保留更多细节（最多5条）
+        assert "修复认证问题" in result
+        assert "[修复]" not in result  # 无标签风格
+        # 难点工作应保留细节（最多3条）
         assert "定位问题" in result
         assert "修复代码" in result
 
-    def test_format_with_details(self):
-        """测试带细节的格式化"""
+    def test_format_highlight_with_details(self):
+        """测试重点工作带细节的格式化"""
         commits = [{
             "message": "feat: 主功能",
-            "label": "[新功能]",
             "type": "feat",
-            "is_highlight": False,
+            "is_highlight": True,
             "is_challenge": False,
-            "commit_count": 1,
+            "commit_count": 2,
             "priority": 1,
-            "details": ["细节1", "细节2"],
+            "details": ["细节1", "细节2", "细节3"],
         }]
         result = format_project_section("project-a", commits)
 
+        # 重点工作保留细节
         assert "细节1" in result
         assert "细节2" in result
         assert "    -" in result  # 缩进的细节
 
-    def test_highlight_more_details(self):
-        """测试重点工作保留更多细节"""
+    def test_highlight_limited_details(self):
+        """测试重点工作保留最多3条细节"""
         commits = [{
             "message": "feat: 用户系统开发",
-            "label": "[新功能]",
             "type": "feat",
             "is_highlight": True,
             "is_challenge": False,
@@ -297,16 +297,16 @@ class TestFormatProjectSection:
         }]
         result = format_project_section("project-a", commits)
 
-        # 重点工作应保留最多5条细节
+        # 重点工作应保留最多3条细节
         assert "登录功能" in result
         assert "注册功能" in result
         assert "密码重置" in result
+        assert "验证码" not in result  # 超过3条的被过滤
 
-    def test_normal_work_limited_details(self):
-        """测试普通工作限制细节数量"""
+    def test_normal_work_no_details(self):
+        """测试普通工作不展开细节"""
         commits = [{
             "message": "docs: 更新文档",
-            "label": "[文档]",
             "type": "docs",
             "is_highlight": False,
             "is_challenge": False,
@@ -316,11 +316,9 @@ class TestFormatProjectSection:
         }]
         result = format_project_section("project-a", commits)
 
-        # 普通工作最多保留2条细节
-        assert "细节1" in result
-        assert "细节2" in result
-        assert "细节3" not in result
-        assert "细节4" not in result
+        # 普通工作不展开子条目
+        assert "细节1" not in result
+        assert "细节2" not in result
 
 
 class TestFilterTrivialCommits:
@@ -338,7 +336,7 @@ class TestFilterTrivialCommits:
 
 
 class TestGenerateReport:
-    """generate_report 函数测试"""
+    """generate_report 函数测试（无标签风格）"""
 
     def test_generate_empty_report(self):
         """测试生成空报告"""
@@ -350,7 +348,10 @@ class TestGenerateReport:
         result = generate_report(sample_commits)
 
         assert "project-frontend" in result
-        assert "[新功能]" in result or "[修复]" in result or "[优化]" in result
+        # 无标签风格：不应包含类型标签
+        assert "[新功能]" not in result
+        assert "[修复]" not in result
+        assert "[优化]" not in result
 
     def test_generate_report_with_supplements(self):
         """测试生成包含补充内容的报告"""
