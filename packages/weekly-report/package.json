@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/weekly-report",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Claude Code Skill - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤",
   "scripts": {
     "postinstall": "node install-skill.js",

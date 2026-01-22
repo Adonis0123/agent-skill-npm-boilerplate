@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/skill-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more",
   "type": "module",
   "main": "dist/index.js",
