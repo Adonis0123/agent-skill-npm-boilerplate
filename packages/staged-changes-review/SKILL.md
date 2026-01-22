@@ -8,6 +8,14 @@ version: 1.0.0
 
 This skill provides comprehensive analysis of Git staged changes to identify risks, errors, and potential issues before committing code.
 
+## 输出要求 / Output Requirements
+
+**重要：本技能必须使用中文输出所有分析结果和建议。**
+
+- **语言 (Language)**: 始终使用中文回复
+- **编码 (Encoding)**: 使用 UTF-8 编码
+- **风格 (Style)**: 专业、详细、实用，提供具体的代码示例和修改建议
+
 ## Core Workflow
 
 When invoked, follow this systematic review process:
