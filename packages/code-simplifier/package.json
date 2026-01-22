@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/code-simplifier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code Skill - 代码质量优化，专注于清晰度、一致性、可维护性。安装时自动从 Anthropic 官方仓库拉取最新版本。",
   "scripts": {
     "postinstall": "node install-skill.js",
