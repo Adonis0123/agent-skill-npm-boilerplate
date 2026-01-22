@@ -23,9 +23,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 
 // shared/src/install-skill.ts
-var import_fs2 = __toESM(require("fs"));
-var import_path2 = __toESM(require("path"));
-var import_os2 = __toESM(require("os"));
+var import_fs3 = __toESM(require("fs"));
+var import_path3 = __toESM(require("path"));
+var import_os3 = __toESM(require("os"));
 var import_child_process = require("child_process");
 
 // shared/src/utils.ts
@@ -116,6 +116,69 @@ function readSkillConfig(dir) {
   return JSON.parse(import_fs.default.readFileSync(configPath, "utf-8"));
 }
 
+// shared/src/claude-settings.ts
+var import_fs2 = __toESM(require("fs"));
+var import_path2 = __toESM(require("path"));
+var import_os2 = __toESM(require("os"));
+function getClaudeSettingsPath() {
+  return import_path2.default.join(import_os2.default.homedir(), ".claude", "settings.json");
+}
+function readClaudeSettings() {
+  const settingsPath = getClaudeSettingsPath();
+  if (!import_fs2.default.existsSync(settingsPath)) {
+    return {};
+  }
+  try {
+    const content = import_fs2.default.readFileSync(settingsPath, "utf-8");
+    return JSON.parse(content);
+  } catch (error) {
+    console.warn("  \u26A0 Warning: Could not parse settings.json, treating as empty");
+    return {};
+  }
+}
+function writeClaudeSettings(settings) {
+  const settingsPath = getClaudeSettingsPath();
+  const settingsDir = import_path2.default.dirname(settingsPath);
+  if (!import_fs2.default.existsSync(settingsDir)) {
+    import_fs2.default.mkdirSync(settingsDir, { recursive: true });
+  }
+  import_fs2.default.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf-8");
+}
+function hookMatcherExists(existingHooks, newMatcher) {
+  return existingHooks.some((hook) => hook.matcher === newMatcher.matcher);
+}
+function addClaudeHooks(hooksConfig, skillName) {
+  const settings = readClaudeSettings();
+  let modified = false;
+  if (!settings.hooks || typeof settings.hooks !== "object") {
+    settings.hooks = {};
+  }
+  const hooks = settings.hooks;
+  for (const [hookType, hookMatchers] of Object.entries(hooksConfig)) {
+    if (!hookMatchers || !Array.isArray(hookMatchers)) {
+      continue;
+    }
+    if (!hooks[hookType] || !Array.isArray(hooks[hookType])) {
+      hooks[hookType] = [];
+    }
+    const existingHooks = hooks[hookType];
+    for (const matcher of hookMatchers) {
+      if (!hookMatcherExists(existingHooks, matcher)) {
+        existingHooks.push(matcher);
+        modified = true;
+        console.log(`  \u2713 Added ${hookType} hook for ${skillName}`);
+      } else {
+        console.log(`  \u2139 ${hookType} hook already exists, skipping`);
+      }
+    }
+    hooks[hookType] = existingHooks;
+  }
+  if (modified) {
+    writeClaudeSettings(settings);
+  }
+  return modified;
+}
+
 // shared/src/install-skill.ts
 function fetchFromRemote(tempDir, remoteSource) {
   try {
@@ -124,7 +187,7 @@ function fetchFromRemote(tempDir, remoteSource) {
       stdio: "pipe",
       timeout: 6e4
     });
-    if (import_fs2.default.existsSync(import_path2.default.join(tempDir, "SKILL.md"))) {
+    if (import_fs3.default.existsSync(import_path3.default.join(tempDir, "SKILL.md"))) {
       console.log("  \u2713 Fetched latest version from remote");
       return true;
     }
@@ -146,14 +209,14 @@ function getSourceDir(config, packageDir) {
       isRemote: false
     };
   }
-  const tempDir = import_path2.default.join(import_os2.default.tmpdir(), `skill-fetch-${Date.now()}`);
+  const tempDir = import_path3.default.join(import_os3.default.tmpdir(), `skill-fetch-${Date.now()}`);
   const remoteSuccess = fetchFromRemote(tempDir, config.remoteSource);
   if (remoteSuccess) {
     return {
       sourceDir: tempDir,
       cleanup: () => {
         try {
-          import_fs2.default.rmSync(tempDir, { recursive: true, force: true });
+          import_fs3.default.rmSync(tempDir, { recursive: true, force: true });
         } catch {
         }
       },
@@ -161,7 +224,7 @@ function getSourceDir(config, packageDir) {
     };
   }
   try {
-    import_fs2.default.rmSync(tempDir, { recursive: true, force: true });
+    import_fs3.default.rmSync(tempDir, { recursive: true, force: true });
   } catch {
   }
   return {
@@ -172,11 +235,11 @@ function getSourceDir(config, packageDir) {
   };
 }
 function updateManifest(skillsDir, config, targetName, isRemote) {
-  const manifestPath = import_path2.default.join(skillsDir, ".skills-manifest.json");
+  const manifestPath = import_path3.default.join(skillsDir, ".skills-manifest.json");
   let manifest = { skills: {} };
-  if (import_fs2.default.existsSync(manifestPath)) {
+  if (import_fs3.default.existsSync(manifestPath)) {
     try {
-      manifest = JSON.parse(import_fs2.default.readFileSync(manifestPath, "utf-8"));
+      manifest = JSON.parse(import_fs3.default.readFileSync(manifestPath, "utf-8"));
     } catch {
       console.warn("  Warning: Could not parse existing manifest, creating new one");
       manifest = { skills: {} };
@@ -187,55 +250,68 @@ function updateManifest(skillsDir, config, targetName, isRemote) {
     version: config.version,
     installedAt: (/* @__PURE__ */ new Date()).toISOString(),
     package: config.package || config.name,
-    path: import_path2.default.join(skillsDir, skillName),
+    path: import_path3.default.join(skillsDir, skillName),
     target: targetName,
     ...config.remoteSource && { source: config.remoteSource }
   };
-  import_fs2.default.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  import_fs3.default.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 }
 function installToTarget(target, config, sourceDir, isRemote) {
-  var _a;
+  var _a, _b;
   console.log(`
 \u{1F4E6} Installing to ${target.name}...`);
   const isGlobal = isGlobalInstall();
   const location = detectInstallLocation(target.paths, isGlobal);
   const skillName = extractSkillName(config.name);
-  const targetDir = import_path2.default.join(location.base, skillName);
-  const altTargetDir = import_path2.default.join(location.base, config.name);
+  const targetDir = import_path3.default.join(location.base, skillName);
+  const altTargetDir = import_path3.default.join(location.base, config.name);
   console.log(`  Type: ${location.type}${isGlobal ? " (global)" : " (project)"}`);
   console.log(`  Directory: ${targetDir}`);
-  if (import_fs2.default.existsSync(altTargetDir) && altTargetDir !== targetDir) {
+  if (import_fs3.default.existsSync(altTargetDir) && altTargetDir !== targetDir) {
     console.log("  \u{1F9F9} Cleaning up alternative path format...");
     removeDir(altTargetDir);
     console.log(`  \u2713 Removed directory: ${config.name}`);
   }
   ensureDir(targetDir);
-  const skillMdSource = import_path2.default.join(sourceDir, "SKILL.md");
-  if (!import_fs2.default.existsSync(skillMdSource)) {
+  const skillMdSource = import_path3.default.join(sourceDir, "SKILL.md");
+  if (!import_fs3.default.existsSync(skillMdSource)) {
     throw new Error("SKILL.md is required but not found");
   }
-  import_fs2.default.copyFileSync(skillMdSource, import_path2.default.join(targetDir, "SKILL.md"));
+  import_fs3.default.copyFileSync(skillMdSource, import_path3.default.join(targetDir, "SKILL.md"));
   console.log("  \u2713 Copied SKILL.md");
   const filesToCopy = config.files || {};
   for (const [source, dest] of Object.entries(filesToCopy)) {
-    const sourcePath = import_path2.default.join(sourceDir, source);
-    if (!import_fs2.default.existsSync(sourcePath)) {
+    const sourcePath = import_path3.default.join(sourceDir, source);
+    if (!import_fs3.default.existsSync(sourcePath)) {
       console.warn(`  \u26A0 Warning: ${source} not found, skipping`);
       continue;
     }
-    const destPath = import_path2.default.join(targetDir, dest);
-    if (import_fs2.default.statSync(sourcePath).isDirectory()) {
+    const destPath = import_path3.default.join(targetDir, dest);
+    if (import_fs3.default.statSync(sourcePath).isDirectory()) {
       copyDir(sourcePath, destPath);
       console.log(`  \u2713 Copied directory: ${source}`);
     } else {
-      const destDir = import_path2.default.dirname(destPath);
+      const destDir = import_path3.default.dirname(destPath);
       ensureDir(destDir);
-      import_fs2.default.copyFileSync(sourcePath, destPath);
+      import_fs3.default.copyFileSync(sourcePath, destPath);
       console.log(`  \u2713 Copied file: ${source}`);
     }
   }
   updateManifest(location.base, config, target.name, isRemote);
-  if ((_a = config.hooks) == null ? void 0 : _a.postinstall) {
+  if (target.name === "claude-code" && ((_a = config.claudeSettings) == null ? void 0 : _a.hooks)) {
+    console.log("  \u{1F527} \u914D\u7F6E Claude Code \u94A9\u5B50...");
+    try {
+      const skillName2 = extractSkillName(config.name);
+      const modified = addClaudeHooks(config.claudeSettings.hooks, skillName2);
+      if (modified) {
+        console.log("  \u2705 \u94A9\u5B50\u5DF2\u914D\u7F6E\u5230 ~/.claude/settings.json");
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`  \u26A0 \u8B66\u544A: \u65E0\u6CD5\u914D\u7F6E\u94A9\u5B50: ${message}`);
+    }
+  }
+  if ((_b = config.hooks) == null ? void 0 : _b.postinstall) {
     console.log("  \u{1F527} Running postinstall hook...");
     try {
       (0, import_child_process.execSync)(config.hooks.postinstall, {

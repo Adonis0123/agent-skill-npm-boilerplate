@@ -13,6 +13,7 @@ import {
   readSkillConfig,
   removeDir,
 } from './utils.js';
+import { addClaudeHooks } from './claude-settings.js';
 
 /**
  * Fetch skill files from remote repository using degit
@@ -189,6 +190,23 @@ function installToTarget(
 
   // Update manifest
   updateManifest(location.base, config, target.name, isRemote);
+
+  // Configure Claude Code hooks (only for claude-code target)
+  if (target.name === 'claude-code' && config.claudeSettings?.hooks) {
+    console.log('  🔧 配置 Claude Code 钩子...');
+
+    try {
+      const skillName = extractSkillName(config.name);
+      const modified = addClaudeHooks(config.claudeSettings.hooks, skillName);
+      if (modified) {
+        console.log('  ✅ 钩子已配置到 ~/.claude/settings.json');
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`  ⚠ 警告: 无法配置钩子: ${message}`);
+      // Continue installation even if hook configuration fails
+    }
+  }
 
   // Run postinstall hooks
   if (config.hooks?.postinstall) {

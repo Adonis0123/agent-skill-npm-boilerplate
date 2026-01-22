@@ -17,6 +17,35 @@ export interface HooksConfig {
   preuninstall?: string;
 }
 
+/** Claude Code hook definition */
+export interface ClaudeHook {
+  command: string;
+  type: 'shell' | 'command';
+}
+
+/** Claude Code hook matcher */
+export interface ClaudeHookMatcher {
+  hooks: ClaudeHook[];
+  matcher: string;
+}
+
+/** Claude Code hooks configuration */
+export interface ClaudeHooksConfig {
+  PostToolUse?: ClaudeHookMatcher[];
+  PreToolUse?: ClaudeHookMatcher[];
+  PreCompact?: ClaudeHookMatcher[];
+  SessionEnd?: ClaudeHookMatcher[];
+  Stop?: ClaudeHookMatcher[];
+  SubagentStop?: ClaudeHookMatcher[];
+  UserPromptSubmit?: ClaudeHookMatcher[];
+}
+
+/** Configuration for Claude Code settings integration */
+export interface ClaudeSettingsConfig {
+  hooks?: ClaudeHooksConfig;
+  promptBeforeAdding?: boolean;
+}
+
 /**
  * Skill configuration loaded from .claude-skill.json
  */
@@ -35,6 +64,8 @@ export interface SkillConfig {
   targets?: Record<string, TargetConfig>;
   /** Lifecycle hooks */
   hooks?: HooksConfig;
+  /** Claude Code settings integration */
+  claudeSettings?: ClaudeSettingsConfig;
 }
 
 /** Installation location information */

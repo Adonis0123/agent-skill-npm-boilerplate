@@ -9,6 +9,7 @@ import {
   removeDir,
   readSkillConfig,
 } from './utils.js';
+import { removeClaudeHooks } from './claude-settings.js';
 
 /**
  * Update manifest to remove skill entry
@@ -65,6 +66,21 @@ function uninstallFromTarget(target: EnabledTarget, config: SkillConfig): boolea
 
   // Update manifest
   updateManifest(location.base, config);
+
+  // Remove Claude Code hooks (only for claude-code target)
+  if (target.name === 'claude-code' && removed && config.claudeSettings?.hooks) {
+    try {
+      console.log('  🔧 移除 Claude Code 钩子...');
+      const skillName = extractSkillName(config.name);
+      const modified = removeClaudeHooks(config.claudeSettings.hooks, skillName);
+      if (modified) {
+        console.log('  ✅ 钩子已从 ~/.claude/settings.json 移除');
+      }
+    } catch (error) {
+      // Silently ignore errors during uninstall cleanup
+      console.warn('  ⚠ 警告: 无法移除钩子（可安全忽略）');
+    }
+  }
 
   if (removed) {
     console.log(`  ✅ Uninstalled from ${target.name}`);

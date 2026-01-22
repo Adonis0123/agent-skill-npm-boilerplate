@@ -1,11 +1,27 @@
 {
   "name": "code-simplifier",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "package": "@adonis0123/code-simplifier",
   "remoteSource": "anthropics/claude-plugins-official/plugins/code-simplifier",
   "files": {
     "agents/code-simplifier.md": "SKILL.md",
     "references": "references/"
+  },
+  "claudeSettings": {
+    "hooks": {
+      "PostToolUse": [
+        {
+          "hooks": [
+            {
+              "command": "echo '\\n📝 代码已修改，建议运行: /code-simplifier 进行质量检查\\n'",
+              "type": "command"
+            }
+          ],
+          "matcher": "Edit|Write"
+        }
+      ]
+    },
+    "promptBeforeAdding": false
   },
   "targets": {
     "claude-code": {
