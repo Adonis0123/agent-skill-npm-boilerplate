@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `@adonis0123/agent-browser` - 浏览器自动化，支持网页测试、表单填写、截图和数据提取
 - `@adonis0123/skill-cli` - CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more
 - `@adonis0123/code-doc-generator` - 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档
+- `@adonis0123/code-simplifier` - 代码质量优化，专注于清晰度、一致性、可维护性。安装时自动从 Anthropic 官方仓库拉取最新版本。
 - `@adonis0123/commit` - 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息
 - `@adonis0123/create-skill` - 项目专属技能创建工具，用于快速创建新的 skill 包
 - `@adonis0123/css-tailwind-styling` - CSS 和 Tailwind CSS 样式规范与最佳实践
@@ -29,6 +30,7 @@ claude-skills/
     ├── agent-browser/           # 浏览器自动化，支持网页测试、表单填写、截图和数据提取
     ├── cli/                     # CLI tool for managing AI Agent...
     ├── code-doc-generator/      # 自动分析代码仓库并生成包含 Mermaid 流程图的 REA...
+    ├── code-simplifier/         # 代码质量优化，专注于清晰度、一致性、可维护性。安装时自动从 ...
     ├── commit/                  # 根据暂存的代码变更自动生成符合 Conventional C...
     ├── create-skill/            # 项目专属技能创建工具，用于快速创建新的 skill 包
     ├── css-tailwind-styling/    # CSS 和 Tailwind CSS 样式规范与最佳实践

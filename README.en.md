@@ -47,7 +47,7 @@ npm i -g @adonis0123/weekly-report
 
 ```bash
 # Copy this command to install all skill packages at once
-npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/spec-flow @adonis0123/staged-changes-review @adonis0123/weekly-report
+npm i -g @adonis0123/agent-browser @adonis0123/skill-cli @adonis0123/code-doc-generator @adonis0123/code-simplifier @adonis0123/commit @adonis0123/css-tailwind-styling @adonis0123/react-best-practices @adonis0123/skill-development @adonis0123/spec-flow @adonis0123/staged-changes-review @adonis0123/weekly-report
 ```
 
 Or install line by line (clearer):
@@ -56,6 +56,7 @@ Or install line by line (clearer):
 npm i -g @adonis0123/agent-browser && \
 npm i -g @adonis0123/skill-cli && \
 npm i -g @adonis0123/code-doc-generator && \
+npm i -g @adonis0123/code-simplifier && \
 npm i -g @adonis0123/commit && \
 npm i -g @adonis0123/css-tailwind-styling && \
 npm i -g @adonis0123/react-best-practices && \
@@ -75,6 +76,7 @@ npm i -g @adonis0123/weekly-report
 | [@adonis0123/agent-browser](./packages/agent-browser) | 浏览器自动化，支持网页测试、表单填写、截图和数据提取 | `npm i -g @adonis0123/agent-browser` |
 | [@adonis0123/skill-cli](./packages/cli) | CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more | `npm i -g @adonis0123/skill-cli` |
 | [@adonis0123/code-doc-generator](./packages/code-doc-generator) | 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档 | `npm i -g @adonis0123/code-doc-generator` |
+| [@adonis0123/code-simplifier](./packages/code-simplifier) | 代码质量优化，专注于清晰度、一致性、可维护性。安装时自动从 Anthropic 官方仓库拉取最新版本。 | `npm i -g @adonis0123/code-simplifier` |
 | [@adonis0123/commit](./packages/commit) | 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息 | `npm i -g @adonis0123/commit` |
 | [@adonis0123/create-skill](./packages/create-skill) | 项目专属技能创建工具，用于快速创建新的 skill 包 | - |
 | [@adonis0123/css-tailwind-styling](./packages/css-tailwind-styling) | CSS 和 Tailwind CSS 样式规范与最佳实践 | `npm i -g @adonis0123/css-tailwind-styling` |
@@ -297,6 +299,7 @@ agent-skill-npm-boilerplate/
     ├── agent-browser/           # 浏览器自动化，支持网页测试、表单填写、截图和数据提取
     ├── cli/                     # CLI tool for managing AI Agent...
     ├── code-doc-generator/      # 自动分析代码仓库并生成包含 Mermaid 流程图的 REA...
+    ├── code-simplifier/         # 代码质量优化，专注于清晰度、一致性、可维护性。安装时自动从 ...
     ├── commit/                  # 根据暂存的代码变更自动生成符合 Conventional C...
     ├── create-skill/            # 项目专属技能创建工具，用于快速创建新的 skill 包
     ├── css-tailwind-styling/    # CSS 和 Tailwind CSS 样式规范与最佳实践

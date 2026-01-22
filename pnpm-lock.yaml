@@ -56,6 +56,8 @@ importers:
 
   packages/code-doc-generator: {}
 
+  packages/code-simplifier: {}
+
   packages/commit: {}
 
   packages/create-skill: {}
