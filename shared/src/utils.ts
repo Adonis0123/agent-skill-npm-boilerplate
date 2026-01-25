@@ -143,3 +143,72 @@ export function readSkillConfig(dir: string): SkillConfig {
   }
   return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 }
+
+/**
+ * Parse YAML frontmatter from markdown content
+ * @param content - Markdown content with YAML frontmatter
+ * @returns Parsed frontmatter and body, or null if no frontmatter
+ */
+export function parseYamlFrontmatter(content: string): {
+  frontmatter: Record<string, string>;
+  body: string;
+} | null {
+  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) {
+    return null;
+  }
+
+  const [, frontmatterStr, body] = match;
+  const frontmatter: Record<string, string> = {};
+
+  // Simple YAML key-value parser (supports "key: value" format)
+  const lines = frontmatterStr.split('\n');
+  for (const line of lines) {
+    const match = line.match(/^(\w+):\s*(.*)$/);
+    if (match) {
+      const [, key, value] = match;
+      // Remove quotes if present
+      frontmatter[key] = value.replace(/^["']|["']$/g, '').trim();
+    }
+  }
+
+  return { frontmatter, body };
+}
+
+/**
+ * Patch the 'name' field in SKILL.md frontmatter
+ * Preserves all other frontmatter fields and content
+ * @param skillMdPath - Path to SKILL.md file
+ * @param name - New name value from .claude-skill.json
+ */
+export function patchSkillMdName(skillMdPath: string, name: string): void {
+  try {
+    const content = fs.readFileSync(skillMdPath, 'utf-8');
+    const parsed = parseYamlFrontmatter(content);
+
+    if (!parsed) {
+      // No frontmatter, skip patching
+      console.warn('  ⚠ Warning: SKILL.md has no frontmatter, skipping name patch');
+      return;
+    }
+
+    const { frontmatter, body } = parsed;
+
+    // Update name field
+    frontmatter.name = name;
+
+    // Rebuild YAML frontmatter
+    const frontmatterLines = Object.entries(frontmatter).map(
+      ([key, value]) => `${key}: ${value}`
+    );
+    const newContent = `---\n${frontmatterLines.join('\n')}\n---\n${body}`;
+
+    // Write back to file
+    fs.writeFileSync(skillMdPath, newContent, 'utf-8');
+    console.log(`  ✓ Patched SKILL.md name: ${name}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`  ⚠ Warning: Failed to patch SKILL.md name: ${message}`);
+    // Don't interrupt installation on patch failure
+  }
+}

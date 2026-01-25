@@ -115,6 +115,47 @@ function readSkillConfig(dir) {
   }
   return JSON.parse(import_fs.default.readFileSync(configPath, "utf-8"));
 }
+function parseYamlFrontmatter(content) {
+  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) {
+    return null;
+  }
+  const [, frontmatterStr, body] = match;
+  const frontmatter = {};
+  const lines = frontmatterStr.split("\n");
+  for (const line of lines) {
+    const match2 = line.match(/^(\w+):\s*(.*)$/);
+    if (match2) {
+      const [, key, value] = match2;
+      frontmatter[key] = value.replace(/^["']|["']$/g, "").trim();
+    }
+  }
+  return { frontmatter, body };
+}
+function patchSkillMdName(skillMdPath, name) {
+  try {
+    const content = import_fs.default.readFileSync(skillMdPath, "utf-8");
+    const parsed = parseYamlFrontmatter(content);
+    if (!parsed) {
+      console.warn("  \u26A0 Warning: SKILL.md has no frontmatter, skipping name patch");
+      return;
+    }
+    const { frontmatter, body } = parsed;
+    frontmatter.name = name;
+    const frontmatterLines = Object.entries(frontmatter).map(
+      ([key, value]) => `${key}: ${value}`
+    );
+    const newContent = `---
+${frontmatterLines.join("\n")}
+---
+${body}`;
+    import_fs.default.writeFileSync(skillMdPath, newContent, "utf-8");
+    console.log(`  \u2713 Patched SKILL.md name: ${name}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`  \u26A0 Warning: Failed to patch SKILL.md name: ${message}`);
+  }
+}
 
 // shared/src/claude-settings.ts
 var import_fs2 = __toESM(require("fs"));
@@ -279,8 +320,14 @@ function installToTarget(target, config, sourceDir, isRemote) {
   }
   import_fs3.default.copyFileSync(skillMdSource, import_path3.default.join(targetDir, "SKILL.md"));
   console.log("  \u2713 Copied SKILL.md");
+  if (isRemote && config.remoteSource) {
+    patchSkillMdName(import_path3.default.join(targetDir, "SKILL.md"), config.name);
+  }
   const filesToCopy = config.files || {};
   for (const [source, dest] of Object.entries(filesToCopy)) {
+    if (source === "SKILL.md") {
+      continue;
+    }
     const sourcePath = import_path3.default.join(sourceDir, source);
     if (!import_fs3.default.existsSync(sourcePath)) {
       console.warn(`  \u26A0 Warning: ${source} not found, skipping`);

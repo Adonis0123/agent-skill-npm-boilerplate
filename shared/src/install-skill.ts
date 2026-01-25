@@ -12,6 +12,7 @@ import {
   ensureDir,
   readSkillConfig,
   removeDir,
+  patchSkillMdName,
 } from './utils.js';
 import { addClaudeHooks } from './claude-settings.js';
 
@@ -166,9 +167,19 @@ function installToTarget(
   fs.copyFileSync(skillMdSource, path.join(targetDir, 'SKILL.md'));
   console.log('  ✓ Copied SKILL.md');
 
-  // Copy additional files
+  // Patch name field for remote sources to preserve local configuration
+  if (isRemote && config.remoteSource) {
+    patchSkillMdName(path.join(targetDir, 'SKILL.md'), config.name);
+  }
+
+  // Copy additional files (skip SKILL.md as it's already handled above)
   const filesToCopy = config.files || {};
   for (const [source, dest] of Object.entries(filesToCopy)) {
+    // Skip SKILL.md as it's already copied and patched above
+    if (source === 'SKILL.md') {
+      continue;
+    }
+
     const sourcePath = path.join(sourceDir, source);
     if (!fs.existsSync(sourcePath)) {
       console.warn(`  ⚠ Warning: ${source} not found, skipping`);
