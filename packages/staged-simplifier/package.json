@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/staged-simplifier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Apply code-simplifier principles to staged Git changes before commit",
   "main": "install-skill.js",
   "dependencies": {

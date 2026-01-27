@@ -1,6 +1,6 @@
 {
   "name": "@adonis0123/code-doc-generator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Claude Code Skill - 自动分析代码仓库并生成包含 Mermaid 流程图的 README.md 文档",
   "scripts": {
     "postinstall": "node install-skill.js",
