@@ -1,0 +1,40 @@
+{
+  "name": "staged-simplifier",
+  "version": "1.0.0",
+  "package": "@adonis0123/staged-simplifier",
+  "files": {
+    "references": "references/"
+  },
+  "claudeSettings": {
+    "hooks": {
+      "PostToolUse": [
+        {
+          "matcher": "Edit|Write",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "echo '\n💡 代码已修改，暂存后可运行: /staged-simplifier 优化提交内容\n'"
+            }
+          ]
+        }
+      ]
+    },
+    "promptBeforeAdding": false
+  },
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": {
+        "global": ".cursor/skills",
+        "project": ".cursor/skills"
+      }
+    }
+  }
+}

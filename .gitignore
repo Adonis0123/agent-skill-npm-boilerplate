@@ -41,6 +41,7 @@ logs/
 # Temporary files
 tmp/
 temp/
+.tmp-home/
 
 # Test installation outputs (root)
 .claude/skills/
