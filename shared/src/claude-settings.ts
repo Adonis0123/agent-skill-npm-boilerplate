@@ -1,12 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import type { ClaudeHooksConfig, ClaudeHookMatcher } from './types.js';
+import type { ClaudeHook, ClaudeHooksConfig, ClaudeHookMatcher } from './types.js';
+
+const CLAUDE_SETTINGS_PATH_ENV = 'CLAUDE_CODE_SETTINGS_PATH';
 
 /**
  * Get the path to Claude Code settings.json
  */
 export function getClaudeSettingsPath(): string {
+  const overridePath = process.env[CLAUDE_SETTINGS_PATH_ENV];
+  if (overridePath && overridePath.trim()) {
+    return overridePath.trim();
+  }
   return path.join(os.homedir(), '.claude', 'settings.json');
 }
 
@@ -47,13 +53,85 @@ export function writeClaudeSettings(settings: Record<string, unknown>): void {
 }
 
 /**
- * Check if a hook matcher already exists in the array
+ * Normalize any hook-like object into a valid ClaudeHook.
+ * Claude Code settings schema expects `type: "command"`.
  */
-function hookMatcherExists(
-  existingHooks: ClaudeHookMatcher[],
-  newMatcher: ClaudeHookMatcher
-): boolean {
-  return existingHooks.some((hook) => hook.matcher === newMatcher.matcher);
+function normalizeHook(hook: unknown): ClaudeHook | null {
+  if (!hook || typeof hook !== 'object') return null;
+  const command = (hook as any).command;
+  if (typeof command !== 'string' || !command.trim()) return null;
+  return { type: 'command', command };
+}
+
+function normalizeHooks(hooks: unknown): ClaudeHook[] {
+  if (!Array.isArray(hooks)) return [];
+  const normalized: ClaudeHook[] = [];
+  for (const h of hooks) {
+    const nh = normalizeHook(h);
+    if (nh) normalized.push(nh);
+  }
+  return normalized;
+}
+
+/**
+ * Build a stable key for hook uniqueness comparison.
+ * We consider `command` as identity and always normalize `type` to "command".
+ */
+function getHookKey(hook: ClaudeHook): string {
+  return hook.command;
+}
+
+/**
+ * Merge hooks from `incoming` into `existing` without duplicates.
+ */
+function mergeHooks(
+  existing: ClaudeHook[],
+  incoming: ClaudeHook[]
+): { merged: ClaudeHook[]; didChange: boolean } {
+  const merged: ClaudeHook[] = [];
+  const seen = new Set<string>();
+  let didChange = false;
+
+  // Dedupe existing first (also fixes legacy duplicates)
+  for (const hook of existing) {
+    const key = getHookKey(hook);
+    if (!seen.has(key)) {
+      merged.push(hook);
+      seen.add(key);
+    } else {
+      didChange = true;
+    }
+  }
+
+  for (const hook of incoming) {
+    const key = getHookKey(hook);
+    if (!seen.has(key)) {
+      merged.push(hook);
+      seen.add(key);
+      didChange = true;
+    }
+  }
+
+  return { merged, didChange };
+}
+
+/**
+ * Remove hooks in `toRemove` from `existing` (match by command).
+ */
+function removeHooks(
+  existing: ClaudeHook[],
+  toRemove: ClaudeHook[]
+): { remaining: ClaudeHook[]; didChange: boolean } {
+  const removeKeys = new Set(toRemove.map(getHookKey));
+  const remaining = existing.filter((h) => !removeKeys.has(getHookKey(h)));
+  return { remaining, didChange: remaining.length !== existing.length };
+}
+
+/**
+ * Find matcher entry index by `matcher` string.
+ */
+function findMatcherIndex(existingHooks: ClaudeHookMatcher[], matcher: string): number {
+  return existingHooks.findIndex((hook) => hook && hook.matcher === matcher);
 }
 
 /**
@@ -87,14 +165,37 @@ export function addClaudeHooks(
 
     const existingHooks = hooks[hookType] as ClaudeHookMatcher[];
 
-    // Add each hook matcher if it doesn't already exist
+    // Add/merge each hook matcher
     for (const matcher of hookMatchers) {
-      if (!hookMatcherExists(existingHooks, matcher)) {
-        existingHooks.push(matcher);
-        modified = true;
-        console.log(`  ✓ Added ${hookType} hook for ${skillName}`);
+      const idx = findMatcherIndex(existingHooks, matcher.matcher);
+      if (idx === -1) {
+        const normalized = {
+          matcher: matcher.matcher,
+          hooks: normalizeHooks((matcher as any).hooks),
+        };
+        if (normalized.hooks.length > 0) {
+          existingHooks.push(normalized);
+          modified = true;
+          console.log(`  ✓ Added ${hookType} hook for ${skillName}`);
+        }
       } else {
-        console.log(`  ℹ ${hookType} hook already exists, skipping`);
+        const existingMatcher = existingHooks[idx];
+        const existingMatcherHooks = normalizeHooks((existingMatcher as any).hooks);
+        const incomingHooks = normalizeHooks((matcher as any).hooks);
+
+        const { merged, didChange } = mergeHooks(existingMatcherHooks, incomingHooks);
+        // Also mark modified if we had to normalize legacy entries (e.g. type:"shell")
+        const normalizedChanged =
+          Array.isArray((existingMatcher as any).hooks) &&
+          JSON.stringify((existingMatcher as any).hooks) !== JSON.stringify(merged);
+
+        if (didChange || normalizedChanged) {
+          existingHooks[idx] = { ...existingMatcher, hooks: merged };
+          modified = true;
+          console.log(`  ✓ Merged ${hookType} hooks for ${skillName} (matcher: ${matcher.matcher})`);
+        } else {
+          console.log(`  ℹ ${hookType} hook already exists, skipping`);
+        }
       }
     }
 
@@ -136,19 +237,42 @@ export function removeClaudeHooks(
     }
 
     const existingHooks = hooks[hookType] as ClaudeHookMatcher[];
-    const initialLength = existingHooks.length;
 
-    // Filter out hooks that match our matchers
-    const matchersToRemove = hookMatchers.map((m) => m.matcher);
-    const filteredHooks = existingHooks.filter(
-      (hook) => !matchersToRemove.includes(hook.matcher)
-    );
+    for (const matcher of hookMatchers) {
+      const idx = findMatcherIndex(existingHooks, matcher.matcher);
+      if (idx === -1) {
+        continue;
+      }
 
-    if (filteredHooks.length < initialLength) {
-      hooks[hookType] = filteredHooks;
-      modified = true;
-      console.log(`  ✓ Removed ${hookType} hook for ${skillName}`);
+      const existingMatcher = existingHooks[idx];
+      const existingMatcherHooks = normalizeHooks((existingMatcher as any).hooks);
+      const toRemoveHooks = normalizeHooks((matcher as any).hooks);
+
+      const { remaining, didChange } = removeHooks(existingMatcherHooks, toRemoveHooks);
+      if (didChange) {
+        modified = true;
+        if (remaining.length === 0) {
+          existingHooks.splice(idx, 1);
+          console.log(
+            `  ✓ Removed ${hookType} matcher for ${skillName} (matcher: ${matcher.matcher})`
+          );
+        } else {
+          existingHooks[idx] = { ...existingMatcher, hooks: remaining };
+          console.log(`  ✓ Removed ${hookType} hooks for ${skillName} (matcher: ${matcher.matcher})`);
+        }
+      } else {
+        // Even if nothing removed, normalize legacy hooks to prevent invalid settings lingering.
+        const normalizedChanged =
+          Array.isArray((existingMatcher as any).hooks) &&
+          JSON.stringify((existingMatcher as any).hooks) !== JSON.stringify(existingMatcherHooks);
+        if (normalizedChanged) {
+          existingHooks[idx] = { ...existingMatcher, hooks: existingMatcherHooks };
+          modified = true;
+        }
+      }
     }
+
+    hooks[hookType] = existingHooks;
   }
 
   if (modified) {

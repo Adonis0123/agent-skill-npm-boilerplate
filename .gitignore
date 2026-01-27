@@ -42,6 +42,7 @@ logs/
 tmp/
 temp/
 .tmp-home/
+.tmp-claude-settings-*/
 
 # Test installation outputs (root)
 .claude/skills/

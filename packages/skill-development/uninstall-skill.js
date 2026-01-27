@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -100,7 +101,12 @@ function readSkillConfig(dir) {
 var import_fs2 = __toESM(require("fs"));
 var import_path2 = __toESM(require("path"));
 var import_os2 = __toESM(require("os"));
+var CLAUDE_SETTINGS_PATH_ENV = "CLAUDE_CODE_SETTINGS_PATH";
 function getClaudeSettingsPath() {
+  const overridePath = process.env[CLAUDE_SETTINGS_PATH_ENV];
+  if (overridePath && overridePath.trim()) {
+    return overridePath.trim();
+  }
   return import_path2.default.join(import_os2.default.homedir(), ".claude", "settings.json");
 }
 function readClaudeSettings() {
@@ -124,6 +130,32 @@ function writeClaudeSettings(settings) {
   }
   import_fs2.default.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf-8");
 }
+function normalizeHook(hook) {
+  if (!hook || typeof hook !== "object") return null;
+  const command = hook.command;
+  if (typeof command !== "string" || !command.trim()) return null;
+  return { type: "command", command };
+}
+function normalizeHooks(hooks) {
+  if (!Array.isArray(hooks)) return [];
+  const normalized = [];
+  for (const h of hooks) {
+    const nh = normalizeHook(h);
+    if (nh) normalized.push(nh);
+  }
+  return normalized;
+}
+function getHookKey(hook) {
+  return hook.command;
+}
+function removeHooks(existing, toRemove) {
+  const removeKeys = new Set(toRemove.map(getHookKey));
+  const remaining = existing.filter((h) => !removeKeys.has(getHookKey(h)));
+  return { remaining, didChange: remaining.length !== existing.length };
+}
+function findMatcherIndex(existingHooks, matcher) {
+  return existingHooks.findIndex((hook) => hook && hook.matcher === matcher);
+}
 function removeClaudeHooks(hooksConfig, skillName) {
   const settings = readClaudeSettings();
   let modified = false;
@@ -139,16 +171,35 @@ function removeClaudeHooks(hooksConfig, skillName) {
       continue;
     }
     const existingHooks = hooks[hookType];
-    const initialLength = existingHooks.length;
-    const matchersToRemove = hookMatchers.map((m) => m.matcher);
-    const filteredHooks = existingHooks.filter(
-      (hook) => !matchersToRemove.includes(hook.matcher)
-    );
-    if (filteredHooks.length < initialLength) {
-      hooks[hookType] = filteredHooks;
-      modified = true;
-      console.log(`  \u2713 Removed ${hookType} hook for ${skillName}`);
+    for (const matcher of hookMatchers) {
+      const idx = findMatcherIndex(existingHooks, matcher.matcher);
+      if (idx === -1) {
+        continue;
+      }
+      const existingMatcher = existingHooks[idx];
+      const existingMatcherHooks = normalizeHooks(existingMatcher.hooks);
+      const toRemoveHooks = normalizeHooks(matcher.hooks);
+      const { remaining, didChange } = removeHooks(existingMatcherHooks, toRemoveHooks);
+      if (didChange) {
+        modified = true;
+        if (remaining.length === 0) {
+          existingHooks.splice(idx, 1);
+          console.log(
+            `  \u2713 Removed ${hookType} matcher for ${skillName} (matcher: ${matcher.matcher})`
+          );
+        } else {
+          existingHooks[idx] = { ...existingMatcher, hooks: remaining };
+          console.log(`  \u2713 Removed ${hookType} hooks for ${skillName} (matcher: ${matcher.matcher})`);
+        }
+      } else {
+        const normalizedChanged = Array.isArray(existingMatcher.hooks) && JSON.stringify(existingMatcher.hooks) !== JSON.stringify(existingMatcherHooks);
+        if (normalizedChanged) {
+          existingHooks[idx] = { ...existingMatcher, hooks: existingMatcherHooks };
+          modified = true;
+        }
+      }
     }
+    hooks[hookType] = existingHooks;
   }
   if (modified) {
     writeClaudeSettings(settings);

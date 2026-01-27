@@ -10,6 +10,7 @@
     "sync:skills": "npx tsx scripts/sync-more-skills.ts",
     "build": "pnpm sync",
     "install:select": "npx tsx scripts/install-select.ts",
+    "test": "node --test --import tsx shared/tests/**/*.test.ts",
     "test:all": "pnpm -r test",
     "tag": "release-it",
     "tag:ci": "release-it --ci",
@@ -27,6 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "@inquirer/prompts": "^8.2.0",
+    "@types/node": "^22.0.0",
     "esbuild": "^0.24.0",
     "release-it": "^19.2.3",
     "release-it-pnpm": "^4.6.6",

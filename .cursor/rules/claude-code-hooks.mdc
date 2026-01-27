@@ -1,0 +1,46 @@
+---
+description: Claude Code settings hooks schema rules
+alwaysApply: true
+---
+
+# Claude Code hooks 规则（避免写坏 settings.json）
+
+## 结论（必须遵守）
+
+- **Claude Code `~/.claude/settings.json` 的 hooks 配置里，hook 的 `type` 只能使用 `"command"`**  
+  - **禁止**写 `"shell"`（会触发 Settings Error：`type: Invalid input`，导致整份 settings 被跳过）。
+
+## 正确示例
+
+```json
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/you/.claude/scripts/remote-skill-update-check.js\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## 错误示例（不要这样写）
+
+```json
+{
+  "type": "shell",
+  "command": "echo hello"
+}
+```
+
+## 代码侧约束（本仓库约定）
+
+- `shared/src/types.ts` 中 `ClaudeHook.type` 被限定为 `'command'`，任何新代码都应遵守该类型约束。
+- 如果你在安装脚本里要执行 shell 命令：依然写到 `command` 字段里执行（例如 `bash -lc "..."`），但 **`type` 仍必须是 `"command"`**。
+

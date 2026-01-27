@@ -1,0 +1,55 @@
+---
+description: Rules for .claude directory and Claude settings
+alwaysApply: true
+---
+
+# `.claude` 目录规则（本仓库 + 个人环境）
+
+## 1) 提交规范（必须遵守）
+
+- **不要提交**任何运行时/安装产物到仓库：如 `.claude/skills/**`、`.claude/scripts/**`、`.claude/**/.skills-manifest.json` 等。
+- `.claude` 目录如果只是本地测试用，应该放在 `.gitignore` 覆盖范围内（本仓库已忽略 `.claude/skills/` 等）。
+
+## 2) Claude Code `settings.json`（最容易踩坑）
+
+### 2.1 hooks 的 `type` 只能是 `"command"`
+
+- **允许**：`"type": "command"`
+- **禁止**：`"type": "shell"`（会触发 Settings Error：`type: Invalid input`，导致整份 settings 被跳过）
+
+正确示例：
+
+```json
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/you/.claude/scripts/remote-skill-update-check.js\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 2.2 允许执行 shell 的方式（但 type 仍是 command）
+
+如果确实要跑 shell，可以把 shell 包在 command 里：
+
+```json
+{
+  "type": "command",
+  "command": "bash -lc \"echo hello\""
+}
+```
+
+## 3) 本仓库代码侧约束
+
+- `shared/src/types.ts` 中 `ClaudeHook.type` 已限定为 `'command'`，任何写入 `~/.claude/settings.json` 的逻辑都必须遵守。
+- 写入 hooks 时要做 **合并去重**，不要覆盖用户已有 `matcher` 的 hooks（本仓库 `shared/src/claude-settings.ts` 已实现）。
+

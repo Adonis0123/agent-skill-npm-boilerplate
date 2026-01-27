@@ -15,6 +15,63 @@ import {
   patchSkillMdName,
 } from './utils.js';
 import { addClaudeHooks } from './claude-settings.js';
+import {
+  getRemoteUpdateCheckerScriptContents,
+  getRemoteUpdateCheckerScriptInstallPath,
+  REMOTE_UPDATE_CHECKER_VERSION,
+} from './remote-update-checker-script.js';
+
+function ensureRemoteUpdateCheckerInstalled(): string {
+  const scriptPath = getRemoteUpdateCheckerScriptInstallPath();
+  const scriptsDir = path.dirname(scriptPath);
+  ensureDir(scriptsDir);
+
+  const marker = `/* remote-skill-update-checker v${REMOTE_UPDATE_CHECKER_VERSION} */`;
+
+  if (fs.existsSync(scriptPath)) {
+    try {
+      const existing = fs.readFileSync(scriptPath, 'utf-8');
+      if (existing.includes(marker)) {
+        return scriptPath;
+      }
+    } catch {
+      // ignore read errors, we'll rewrite
+    }
+  }
+
+  const contents = getRemoteUpdateCheckerScriptContents();
+  fs.writeFileSync(scriptPath, contents, { encoding: 'utf-8' });
+  try {
+    fs.chmodSync(scriptPath, 0o755);
+  } catch {
+    // best-effort
+  }
+
+  return scriptPath;
+}
+
+function ensureRemoteUpdateSessionEndHook(scriptPath: string): void {
+  // Use a stable absolute path to avoid breaking if a skill is removed.
+  const command = `node "${scriptPath}"`;
+
+  addClaudeHooks(
+    {
+      SessionEnd: [
+        {
+          matcher: '*',
+          hooks: [
+            {
+              command,
+              // Claude Code settings schema expects "command"
+              type: 'command',
+            },
+          ],
+        },
+      ],
+    },
+    'remote-update-checker'
+  );
+}
 
 /**
  * Fetch skill files from remote repository using degit
@@ -201,6 +258,18 @@ function installToTarget(
 
   // Update manifest
   updateManifest(location.base, config, target.name, isRemote);
+
+  // Remote-source update reminder (Claude Code only)
+  // We check GitHub commit changes at SessionEnd and only remind when updates exist.
+  if (target.name === 'claude-code' && config.remoteSource) {
+    try {
+      const checkerPath = ensureRemoteUpdateCheckerInstalled();
+      ensureRemoteUpdateSessionEndHook(checkerPath);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`  ⚠ 警告: 无法配置远程更新检查（可安全忽略）: ${message}`);
+    }
+  }
 
   // Configure Claude Code hooks (only for claude-code target)
   if (target.name === 'claude-code' && config.claudeSettings?.hooks) {

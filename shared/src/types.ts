@@ -20,7 +20,11 @@ export interface HooksConfig {
 /** Claude Code hook definition */
 export interface ClaudeHook {
   command: string;
-  type: 'shell' | 'command';
+  /**
+   * Claude Code settings schema accepts "command".
+   * (Older docs mention "shell", but it is rejected by current settings validation.)
+   */
+  type: 'command';
 }
 
 /** Claude Code hook matcher */

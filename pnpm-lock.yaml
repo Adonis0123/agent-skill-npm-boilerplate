@@ -11,6 +11,9 @@ importers:
       '@inquirer/prompts':
         specifier: ^8.2.0
         version: 8.2.0(@types/node@22.19.7)
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.7
       esbuild:
         specifier: ^0.24.0
         version: 0.24.2
@@ -72,9 +75,18 @@ importers:
 
   packages/staged-changes-review: {}
 
+  packages/staged-simplifier:
+    dependencies:
+      '@adonis0123/code-simplifier':
+        specifier: ^1.1.1
+        version: 1.1.1
+
   packages/weekly-report: {}
 
 packages:
+
+  '@adonis0123/code-simplifier@1.1.1':
+    resolution: {integrity: sha512-GyYxOHaW1lP8XhZiI4TBx5dqlzdwPctewwzpDNboLqm7qK8g5Cqn85aO29qdoK2SjPYoquWuCXRTLwPn5kRHeQ==}
 
   '@conventional-changelog/git-client@2.5.1':
     resolution: {integrity: sha512-lAw7iA5oTPWOLjiweb7DlGEMDEvzqzLLa6aWOly2FSZ64IwLE8T458rC+o+WvI31Doz6joM7X2DoNog7mX8r4A==}
@@ -1689,6 +1701,8 @@ packages:
     engines: {node: '>=18'}
 
 snapshots:
+
+  '@adonis0123/code-simplifier@1.1.1': {}
 
   '@conventional-changelog/git-client@2.5.1(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.2.1)':
     dependencies:
