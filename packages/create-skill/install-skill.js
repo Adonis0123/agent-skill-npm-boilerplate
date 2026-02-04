@@ -288,7 +288,7 @@ function addClaudeHooks(hooksConfig, skillName) {
 // shared/src/remote-update-checker-script.ts
 var import_path3 = __toESM(require("path"));
 var import_os3 = __toESM(require("os"));
-var REMOTE_UPDATE_CHECKER_VERSION = "1";
+var REMOTE_UPDATE_CHECKER_VERSION = "2";
 function getRemoteUpdateCheckerScriptContents() {
   const version = REMOTE_UPDATE_CHECKER_VERSION;
   return `#!/usr/bin/env node
@@ -300,6 +300,7 @@ const os = require('os');
 const https = require('https');
 
 const DEFAULT_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 1 day
+const DEFAULT_TIMEOUT_MS = 10000; // 10 seconds
 
 function parseArgs(argv) {
   const args = new Set(argv.slice(2));
@@ -307,6 +308,14 @@ function parseArgs(argv) {
     force: args.has('--force') || args.has('-f'),
     verbose: args.has('--verbose') || args.has('-v'),
   };
+}
+
+/**
+ * Get GitHub token from environment for authenticated requests.
+ * Authenticated requests have higher rate limits (5000 req/hour vs 60 req/hour).
+ */
+function getGithubToken() {
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 }
 
 function readJson(filePath) {
@@ -381,22 +390,41 @@ function shouldSkipByCooldown(lastCheckedAtIso, now, cooldownMs) {
   return now.getTime() - last.getTime() < cooldownMs;
 }
 
-function fetchText(url) {
+/**
+ * Fetch text from URL with timeout and optional GitHub token.
+ * @param {string} url - URL to fetch
+ * @param {object} options - Options
+ * @param {number} [options.timeout=10000] - Timeout in milliseconds
+ * @param {string} [options.githubToken] - GitHub token for authenticated requests
+ * @returns {Promise<string>} Response text
+ */
+function fetchText(url, options = {}) {
+  const timeout = options.timeout || DEFAULT_TIMEOUT_MS;
+  const githubToken = options.githubToken || getGithubToken();
+
   return new Promise((resolve, reject) => {
+    const headers = {
+      'user-agent': 'claude-skills-remote-update-checker',
+      accept: 'application/vnd.github+json',
+    };
+
+    // Add GitHub token if available (increases rate limit from 60 to 5000 req/hour)
+    if (githubToken) {
+      headers.authorization = 'Bearer ' + githubToken;
+    }
+
     const req = https.request(
       url,
       {
         method: 'GET',
-        headers: {
-          'user-agent': 'claude-skills-remote-update-checker',
-          accept: 'application/vnd.github+json',
-        },
+        headers: headers,
       },
       (res) => {
         let data = '';
         res.setEncoding('utf8');
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
+          clearTimeout(timeoutId);
           if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
             resolve(data);
           } else {
@@ -405,7 +433,18 @@ function fetchText(url) {
         });
       }
     );
-    req.on('error', reject);
+
+    // Timeout handler
+    const timeoutId = setTimeout(() => {
+      req.destroy();
+      reject(new Error('Request timeout after ' + timeout + 'ms'));
+    }, timeout);
+
+    req.on('error', (err) => {
+      clearTimeout(timeoutId);
+      reject(err);
+    });
+
     req.end();
   });
 }
@@ -426,6 +465,7 @@ async function main() {
   const { force, verbose } = parseArgs(process.argv);
   const now = new Date();
   const cooldownMs = DEFAULT_COOLDOWN_MS;
+  const githubToken = getGithubToken();
 
   const manifestPaths = getManifestPaths();
   const updates = [];
@@ -449,7 +489,10 @@ async function main() {
       }
 
       try {
-        const text = await fetchText(url);
+        const text = await fetchText(url, {
+          timeout: DEFAULT_TIMEOUT_MS,
+          githubToken: githubToken,
+        });
         const latestSha = extractLatestSha(text);
 
         manifest.remoteCache[remoteSource] = {

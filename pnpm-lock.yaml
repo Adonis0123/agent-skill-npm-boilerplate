@@ -83,6 +83,8 @@ importers:
 
   packages/weekly-report: {}
 
+  packages/zustand-store-scaffold: {}
+
 packages:
 
   '@adonis0123/code-simplifier@1.1.1':

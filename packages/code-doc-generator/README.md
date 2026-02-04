@@ -52,3 +52,4 @@ MIT
 - [@adonis0123/staged-changes-review](https://www.npmjs.com/package/@adonis0123/staged-changes-review) - 代码审查
 - [@adonis0123/create-skill](https://www.npmjs.com/package/@adonis0123/create-skill) - 创建新技能包
 - [@adonis0123/css-tailwind-styling](https://www.npmjs.com/package/@adonis0123/css-tailwind-styling) - CSS 和 Tailwind 样式规范
+- [@adonis0123/zustand-store-scaffold](https://www.npmjs.com/package/@adonis0123/zustand-store-scaffold) - Zustand Store 脚手架生成器
