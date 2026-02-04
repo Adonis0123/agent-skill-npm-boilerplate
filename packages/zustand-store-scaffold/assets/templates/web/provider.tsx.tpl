@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 
 import { create{{StoreName}}Store } from '.'
 import { {{StoreName}}Context } from './context'
@@ -13,9 +13,9 @@ function {{StoreName}}Provider({ children, ...props }: {{StoreName}}ProviderProp
     storeRef.current = create{{StoreName}}Store(props)
   }
   return (
-    <{{StoreName}}Context value={storeRef.current}>
-      { children }
-    </{{StoreName}}Context>
+    <{{StoreName}}Context.Provider value={storeRef.current}>
+      {children}
+    </{{StoreName}}Context.Provider>
   )
 }
 

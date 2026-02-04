@@ -1,0 +1,40 @@
+{
+  "name": "@adonis0123/zustand-store-scaffold",
+  "version": "1.0.0",
+  "description": "Claude Code Skill - Scaffold Zustand stores quickly using repo patterns",
+  "main": "install-skill.js",
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js",
+    "test": "node install-skill.js && echo 'Installation test completed.'"
+  },
+  "keywords": [
+    "claude-code",
+    "skill",
+    "zustand",
+    "store",
+    "scaffold",
+    "generator"
+  ],
+  "files": [
+    "SKILL.md",
+    "references/",
+    "scripts/",
+    "assets/",
+    "agents/",
+    "install-skill.js",
+    "uninstall-skill.js",
+    ".claude-skill.json"
+  ],
+  "author": "adonis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adonis0123/agent-skill-npm-boilerplate.git",
+    "directory": "packages/zustand-store-scaffold"
+  },
+  "bugs": {
+    "url": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/issues"
+  },
+  "homepage": "https://github.com/Adonis0123/agent-skill-npm-boilerplate/tree/main/packages/zustand-store-scaffold#readme"
+}

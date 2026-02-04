@@ -1,0 +1,21 @@
+{
+  "name": "zustand-store-scaffold",
+  "version": "1.0.0",
+  "package": "@adonis0123/zustand-store-scaffold",
+  "targets": {
+    "claude-code": {
+      "enabled": true,
+      "paths": {
+        "global": ".claude/skills",
+        "project": ".claude/skills"
+      }
+    },
+    "cursor": {
+      "enabled": true,
+      "paths": {
+        "global": ".cursor/skills",
+        "project": ".cursor/skills"
+      }
+    }
+  }
+}

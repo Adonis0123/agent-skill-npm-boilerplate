@@ -1,27 +1,27 @@
 import type { StateCreator } from 'zustand'
 
-export interface {{StoreName}}SliceState {
+export interface {{SliceName}}SliceState {
   // TODO: add state
 }
 
-export interface {{StoreName}}SliceActions {
+export interface {{SliceName}}SliceActions {
   // TODO: add actions
 }
 
-export type {{StoreName}}Slice = {{StoreName}}SliceState & {{StoreName}}SliceActions
+export type {{SliceName}}Slice = {{SliceName}}SliceState & {{SliceName}}SliceActions
 
-export interface {{StoreName}}SliceConfig {
-  initialState?: Partial<{{StoreName}}SliceState>
+export interface {{SliceName}}SliceConfig {
+  initialState?: Partial<{{SliceName}}SliceState>
 }
 
-export function create{{StoreName}}Slice<Slice = unknown>(config?: {{StoreName}}SliceConfig) {
+export function create{{SliceName}}Slice<Slice = unknown>(config?: {{SliceName}}SliceConfig) {
   const { initialState } = config || {}
 
   const slice: StateCreator<
-    {{StoreName}}Slice & Slice,
+    {{SliceName}}Slice & Slice,
     [['zustand/immer', never]],
     [],
-    {{StoreName}}Slice
+    {{SliceName}}Slice
   > = (set) => ({
     ...initialState,
   })

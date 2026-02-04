@@ -24,6 +24,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `@adonis0123/staged-changes-review` - Comprehensive review of staged Git changes for risk assessment, error detection, and impact analysis
 - `@adonis0123/staged-simplifier` - Apply code-simplifier principles to staged Git changes before commit
 - `@adonis0123/weekly-report` - 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
+- `@adonis0123/zustand-store-scaffold` - Scaffold Zustand stores quickly using repo patterns
 
 
 ## 项目结构
@@ -45,7 +46,8 @@ claude-skills/
     ├── spec-flow/               # Structured, specification-driv...
     ├── staged-changes-review/   # Comprehensive review of staged...
     ├── staged-simplifier/       # Apply code-simplifier principl...
-    └── weekly-report/           # 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
+    ├── weekly-report/           # 自动读取 Git 提交记录生成周报，支持多仓库汇总和智能过滤
+    └── zustand-store-scaffold/  # Scaffold Zustand stores quickl...
 ```
 
 ## 常用命令

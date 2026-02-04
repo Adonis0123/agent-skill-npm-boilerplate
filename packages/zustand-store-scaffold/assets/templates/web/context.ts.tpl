@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 import { useStore } from 'zustand'
 
 import type { {{StoreName}}Store, {{StoreName}}StoreActions, {{StoreName}}StoreState } from '.'
