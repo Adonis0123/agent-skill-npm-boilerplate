@@ -55,7 +55,8 @@ Create the skill configuration file. Consult `references/templates.md` for compl
   "package": "@adonis0123/{{SKILL_NAME}}",
   "targets": {
     "claude-code": { "enabled": true, "paths": { "global": ".claude/skills", "project": ".claude/skills" } },
-    "cursor": { "enabled": true, "paths": { "global": ".cursor/skills", "project": ".cursor/skills" } }
+    "cursor": { "enabled": true, "paths": { "global": ".cursor/skills", "project": ".cursor/skills" } },
+    "codex": { "enabled": true, "paths": { "global": ".codex/skills", "project": ".codex/skills" } }
   }
 }
 ```

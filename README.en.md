@@ -409,6 +409,10 @@ packages/skill-name/
     "cursor": {
       "enabled": true,
       "paths": { "global": ".cursor/skills", "project": ".cursor/skills" }
+    },
+    "codex": {
+      "enabled": true,
+      "paths": { "global": ".codex/skills", "project": ".codex/skills" }
     }
   }
 }

@@ -32,6 +32,13 @@ Use this when the skill content is bundled with the npm package:
         "project": ".cursor/skills"
       }
     },
+    "codex": {
+      "enabled": true,
+      "paths": {
+        "global": ".codex/skills",
+        "project": ".codex/skills"
+      }
+    },
     "windsurf": {
       "enabled": false,
       "paths": {
@@ -84,6 +91,13 @@ Use this when the skill should fetch latest content from a remote repository:
       "paths": {
         "global": ".cursor/skills",
         "project": ".cursor/skills"
+      }
+    },
+    "codex": {
+      "enabled": true,
+      "paths": {
+        "global": ".codex/skills",
+        "project": ".codex/skills"
       }
     },
     "windsurf": {
@@ -424,4 +438,3 @@ pnpm sync:skills
 - **Do NOT manually edit** the "更多技能" section in individual README files
 - Always update `templates/more-skills.md` and run sync
 - The sync script preserves all other README content
-
