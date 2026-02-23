@@ -1,5 +1,8 @@
 # @adonis0123/spec-flow
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 Claude Code 技能 - 结构化、规范驱动的开发工作流，具备实时文档生成功能
 
 ## 功能特性

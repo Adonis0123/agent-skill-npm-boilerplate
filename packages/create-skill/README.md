@@ -1,5 +1,8 @@
 # @adonis0123/create-skill
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 项目专属的 Skill 创建工具，用于快速创建新的 Claude Code skill npm 包。
 
 > ⚠️ 这是一个私有包，不会发布到 npm，仅供本项目内部使用。

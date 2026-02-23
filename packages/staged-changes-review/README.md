@@ -1,5 +1,8 @@
 # @adonis0123/staged-changes-review
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 > Git 暂存变更的全面审查（风险评估、错误检测、影响分析）
 
 [![npm version](https://img.shields.io/npm/v/@adonis0123/staged-changes-review.svg)](https://www.npmjs.com/package/@adonis0123/staged-changes-review)

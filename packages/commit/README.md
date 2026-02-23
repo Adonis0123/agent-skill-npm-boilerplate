@@ -1,5 +1,8 @@
 # @adonis0123/commit
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 Claude Code 技能 - 根据暂存的代码变更自动生成符合 Conventional Commits 规范的提交信息。
 
 ## 功能特性
