@@ -1,5 +1,8 @@
 # @adonis0123/agent-browser
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 > Claude Code 技能 - 浏览器自动化（网页测试、表单填写、截图、数据提取）
 
 [![npm version](https://img.shields.io/npm/v/@adonis0123/agent-browser.svg)](https://www.npmjs.com/package/@adonis0123/agent-browser)

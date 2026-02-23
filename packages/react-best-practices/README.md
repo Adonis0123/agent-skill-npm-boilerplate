@@ -1,5 +1,8 @@
 # @adonis0123/react-best-practices
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 > Claude Code 技能 - React 和 Next.js 性能优化最佳实践（来自 Vercel Engineering）
 
 [![npm version](https://img.shields.io/npm/v/@adonis0123/react-best-practices.svg)](https://www.npmjs.com/package/@adonis0123/react-best-practices)

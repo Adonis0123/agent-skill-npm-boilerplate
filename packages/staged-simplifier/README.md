@@ -1,5 +1,8 @@
 # @adonis0123/staged-simplifier
 
+> ⚠️ **Deprecated**: All skills have moved to [adonis-skills.vercel.app](https://adonis-skills.vercel.app/). This repository is no longer maintained.
+
+
 Apply code-simplifier principles to staged Git changes before commit.
 
 专门针对 Git 暂存文件应用代码简化原则的技能，在提交前优化代码质量。

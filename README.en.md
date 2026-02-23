@@ -4,6 +4,9 @@
 
 # Agent Skills
 
+> ⚠️ **Deprecated**: All skills have moved to [adonis-skills.vercel.app](https://adonis-skills.vercel.app/). This repository is no longer maintained.
+
+
 > AI Agent Skill Management Toolkit - Includes CLI tool and multiple installable skill packages
 
 ## 🚀 Quick Start

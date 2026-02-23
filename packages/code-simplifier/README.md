@@ -1,5 +1,8 @@
 # @adonis0123/code-simplifier
 
+> ⚠️ **已废弃**：本仓库中的 Skills 已迁移至 [adonis-skills.vercel.app](https://adonis-skills.vercel.app/)，此处内容不再维护。
+
+
 [![npm version](https://badge.fury.io/js/@adonis0123%2Fcode-simplifier.svg)](https://www.npmjs.com/package/@adonis0123/code-simplifier)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 

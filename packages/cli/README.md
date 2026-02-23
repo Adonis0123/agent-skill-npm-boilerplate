@@ -1,5 +1,8 @@
 # @adonis0123/skill-cli
 
+> ⚠️ **Deprecated**: All skills have moved to [adonis-skills.vercel.app](https://adonis-skills.vercel.app/). This repository is no longer maintained.
+
+
 CLI tool for managing AI Agent Skills - Install, update, list, and manage skills for Claude Code, Cursor, Codex, and more.
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
